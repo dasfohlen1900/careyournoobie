@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noob Care 💚</title>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #aee6af, #cdeeff);
+    font-family: "Comic Sans MS", sans-serif;
+    text-align: center;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  h1 { margin-top: 10px; color: #2b4a2f; }
+
+  #game {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+
+  #noob {
+    position: absolute;
+    bottom: 50px;
+    left: 160px;
+    width: 80px;
+    transition: transform 0.3s;
+  }
+
+  #bubble {
+    position: absolute;
+    top: 40px;
+    left: 120px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px 10px;
+    border: 2px solid #333;
+    display: none;
+    font-weight: bold;
+  }
+
+  .bar-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    gap: 10px;
+  }
+
+  .bar {
+    width: 100px;
+    height: 12px;
+    background: #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: limegreen;
+    width: 100%;
+    transition: width 0.3s;
+  }
+
+  #buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  button {
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  button:hover { transform: scale(1.1); }
+
+  .feed { background: #ffd166; }
+  .wash { background: #6ec6ff; }
+  .sleep { background: #c39bff; }
+  .play { background: #ff8fab; }
+
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes dance {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(-10deg); }
+    50% { transform: translateY(0) rotate(10deg); }
+    75% { transform: translateY(-10px) rotate(-10deg); }
+  }
+
+  .heart {
+    position: absolute;
+    font-size: 24px;
+    animation: floatUp 1.5s ease-out forwards;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Noob Care 💚</h1>
+
+<div id="game">
+  <img id="noob" src="Noob.png" alt="Noob">
+  <div id="bubble">Oof!</div>
+</div>
+
+<div class="bar-container">
+  <div class="bar"><div class="bar-fill" id="hungerBar"></div></div>
+  <div class="bar"><div class="bar-fill" id="energyBar"></div></div>
+  <div class="bar"><div class="bar-fill" id="funBar"></div></div>
+</div>
+
+<div id="buttons">
+  <button class="feed">🍔 Füttern</button>
+  <button class="wash">🧼 Waschen</button>
+  <button class="sleep">😴 Schlafen</button>
+  <button class="play">🎲 Spielen</button>
+</div>
+
+<script>
+let hunger = 100, energy = 100, fun = 100;
+const noob = document.getElementById("noob");
+const bubble = document.getElementById("bubble");
+const game = document.getElementById("game");
+
+const bars = {
+  hunger: document.getElementById("hungerBar"),
+  energy: document.getElementById("energyBar"),
+  fun: document.getElementById("funBar")
+};
+
+function updateBars() {
+  bars.hunger.style.width = hunger + "%";
+  bars.energy.style.width = energy + "%";
+  bars.fun.style.width = fun + "%";
+}
+
+function showBubble(text) {
+  bubble.textContent = text;
+  bubble.style.display = "block";
+  setTimeout(()=>bubble.style.display="none",1500);
+}
+
+function bounceNoob() {
+  noob.style.animation = "bounce 0.5s";
+  setTimeout(()=>noob.style.animation="",500);
+}
+
+function danceNoob() {
+  noob.style.animation = "dance 1s";
+  createHeart();
+  setTimeout(()=>noob.style.animation="",1000);
+}
+
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = "💖";
+  heart.style.left = (Math.random()*200+50) + "px";
+  heart.style.bottom = "50px";
+  game.appendChild(heart);
+  setTimeout(()=>heart.remove(),1500);
+}
+
+// Bewegungen im Spielbereich
+setInterval(()=>{
+  let x = Math.random()*300;
+  let y = Math.random()*200;
+  noob.style.left = x + "px";
+  noob.style.bottom = y + "px";
+},5000);
+
+document.querySelector(".feed").onclick = ()=>{
+  hunger = Math.min(100, hunger + 25);
+  showBubble("Yum! 🍔");
+  bounceNoob();
+  updateBars();
+};
+
+document.querySelector(".wash").onclick = ()=>{
+  showBubble("Spritz! 💦");
+  bounceNoob();
+  fun = Math.min(100, fun + 5);
+  updateBars();
+};
+
+document.querySelector(".sleep").onclick = ()=>{
+  energy = 100;
+  showBubble("Zzz... 😴");
+  noob.style.transform = "rotate(10deg)";
+  setTimeout(()=>{ noob.style.transform = "rotate(0)"; }, 1500);
+  updateBars();
+};
+
+document.querySelector(".play").onclick = ()=>{
+  fun = Math.min(100, fun + 20);
+  showBubble("Weee! 🎉");
+  danceNoob();
+  updateBars();
+};
+
+setInterval(()=>{
+  hunger = Math.max(0, hunger - 1);
+  energy = Math.max(0, energy - 0.5);
+  fun = Math.max(0, fun - 0.7);
+  updateBars();
+
+  if(hunger<20 || energy<20 || fun<20){
+    noob.style.filter="grayscale(0.5)";
+  } else {
+    noob.style.filter="none";
+  }
+},1500);
+
+updateBars();
+</script>
+
+</body>
+</html>
