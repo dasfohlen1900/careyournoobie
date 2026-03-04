@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noob Care 💚</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --y: #f5c518;
+  --g: #1a8c3c;
+  --b: #1a50c0;
+  --r: #e03030;
+  --bg: #0e0e0e;
+  --panel: #161616;
+  --panel2: #1e1e1e;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --muted: #666;
+  --chat-bg: #111;
+  --pixel: 2px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:var(--bg);
+  font-family:'Nunito',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:12px 8px 32px;
+  overflow-x:hidden;
+}
+
+/* ── Pixel scanlines ── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.08) 0px,rgba(0,0,0,0.08) 1px,transparent 1px,transparent 3px);
+  pointer-events:none;z-index:9999;
+}
+
+/* ── Roblox pixel border mixin ── */
+.pixel-box{
+  image-rendering:pixelated;
+  border:3px solid #333;
+  box-shadow:
+    0 0 0 3px #000,
+    4px 4px 0 0 #000;
+}
+
+.wrapper{
+  position:relative;z-index:1;
+  width:100%;max-width:480px;
+  display:flex;flex-direction:column;gap:10px;
+}
+
+/* ── Header ── */
+.header{
+  text-align:center;
+  border:3px solid var(--g);
+  background:var(--panel);
+  border-radius:0;
+  padding:10px 14px 8px;
+  box-shadow:4px 4px 0 #000, 0 0 0 3px #000;
+  position:relative;
+}
+.header h1{
+  font-family:'Press Start 2P',monospace;
+  font-size:1rem;
+  color:var(--y);
+  text-shadow:3px 3px 0 #7a5e00, 0 0 20px rgba(245,197,24,0.4);
+  letter-spacing:2px;
+  margin-bottom:6px;
+}
+.header-sub{
+  display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+}
+.badge{
+  font-family:'Press Start 2P',monospace;
+  font-size:0.45rem;
+  padding:4px 8px;
+  border:2px solid var(--border);
+  background:#111;
+  color:var(--y);
+  box-shadow:2px 2px 0 #000;
+}
+.badge.green{color:var(--g);border-color:var(--g);}
+.badge.blue{color:#5af;border-color:#5af;}
+
+/* ── Main layout: arena left, stats right on wide ── */
+.top-row{display:flex;gap:10px;}
+.top-row .left{flex:1;min-width:0;}
+.top-row .right{width:150px;flex-shrink:0;}
+
+/* ── Arena ── */
+#arena{
+  position:relative;width:100%;height:280px;
+  background:
+    linear-gradient(180deg,#0a0f1f 0%,#0a1a0f 65%,#071008 100%);
+  border:3px solid var(--g);
+  box-shadow:4px 4px 0 #000, inset 0 0 40px rgba(0,0,0,0.7);
+  overflow:hidden;cursor:pointer;
+}
+/* Stars */
+#arena::before{
+  content:'* . * . * . * . * . * . * . *';
+  position:absolute;top:6px;left:0;right:0;
+  color:rgba(255,255,255,0.18);font-size:0.55rem;
+  letter-spacing:6px;pointer-events:none;font-family:monospace;
+}
+/* Ground */
+.ground{
+  position:absolute;bottom:0;left:0;right:0;height:60px;
+  background:repeating-linear-gradient(
+    90deg,
+    #0d2a10 0px,#0d2a10 32px,
+    #0a2010 32px,#0a2010 64px
+  );
+  border-top:3px solid var(--g);
+}
+.ground::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:rgba(74,222,128,0.3);
+}
+
+/* Noob wrap */
+#noob-wrap{
+  position:absolute;bottom:58px;left:155px;width:84px;z-index:10;
+  transition:left 1.8s steps(12),bottom 1.8s steps(12);
+}
+
+/* Pixel shadow */
+.noob-shadow{
+  position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
+  width:48px;height:8px;
+  background:#000;opacity:0.4;
+  clip-path:ellipse(50% 50% at 50% 50%);
+  filter:blur(3px);
+}
+
+/* ── Speech bubble – Roblox pixel style ── */
+#bubble{
+  position:absolute;
+  bottom:calc(100% + 6px);
+  left:50%;transform:translateX(-50%);
+  background:#fff;color:#111;
+  border:3px solid #000;
+  box-shadow:3px 3px 0 #000;
+  padding:5px 10px;
+  font-family:'Press Start 2P',monospace;
+  font-size:0.38rem;
+  line-height:1.6;
+  white-space:normal;text-align:center;
+  max-width:160px;min-width:60px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.15s;
+  z-index:30;
+}
+#bubble::after{
+  content:'';position:absolute;
+  top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top-color:#000;border-bottom:none;
+}
+#bubble::before{
+  content:'';position:absolute;
+  top:calc(100% - 1px);left:50%;transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:#fff;border-bottom:none;
+  z-index:1;
+}
+#bubble.show{opacity:1;}
+
+#mood-ring{
+  position:absolute;top:8px;right:8px;
+  font-size:1.3rem;z-index:20;
+  image-rendering:pixelated;
+}
+
+/* Particles */
+.particle{
+  position:absolute;pointer-events:none;z-index:25;
+  image-rendering:pixelated;
+  animation:pf 1.3s steps(8) forwards;
+}
+@keyframes pf{
+  0%{opacity:1;transform:translateY(0);}
+  100%{opacity:0;transform:translateY(-60px);}
+}
+
+/* Dead overlay */
+#dead-screen{
+  display:none;position:absolute;inset:0;
+  background:rgba(0,0,0,0.92);z-index:50;
+  flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+#dead-screen.show{display:flex;}
+#dead-screen h2{
+  font-family:'Press Start 2P',monospace;font-size:0.75rem;
+  color:var(--r);text-shadow:2px 2px 0 #600;
+}
+#dead-screen p{
+  font-family:'Press Start 2P',monospace;font-size:0.38rem;
+  color:var(--muted);text-align:center;padding:0 20px;line-height:1.8;
+}
+#revive-btn{
+  font-family:'Press Start 2P',monospace;font-size:0.5rem;
+  background:var(--g);color:#fff;border:3px solid #000;
+  box-shadow:3px 3px 0 #000;
+  padding:10px 18px;cursor:pointer;
+  transition:transform 0.1s;
+}
+#revive-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000;}
+
+/* ── Stats panel ── */
+.stats-panel{
+  background:var(--panel);
+  border:3px solid var(--border);
+  box-shadow:4px 4px 0 #000;
+  padding:10px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.stat-row{display:flex;align-items:center;gap:6px;}
+.stat-icon{font-size:0.85rem;width:18px;text-align:center;flex-shrink:0;}
+.stat-lbl{
+  font-family:'Press Start 2P',monospace;
+  font-size:0.3rem;color:var(--muted);
+  width:46px;flex-shrink:0;
+}
+.bar-track{
+  flex:1;height:8px;
+  background:#111;
+  border:2px solid #333;
+  image-rendering:pixelated;
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  transition:width 0.4s steps(10), background 0.3s;
+  image-rendering:pixelated;
+}
+.stat-val{
+  font-family:'Press Start 2P',monospace;font-size:0.3rem;
+  width:24px;text-align:right;color:var(--muted);flex-shrink:0;
+}
+
+/* XP bar */
+.xp-row{
+  background:var(--panel);border:3px solid var(--border);
+  box-shadow:4px 4px 0 #000;
+  padding:8px 10px;display:flex;align-items:center;gap:8px;
+}
+.xp-lbl{font-family:'Press Start 2P',monospace;font-size:0.35rem;color:var(--y);white-space:nowrap;}
+.xp-track{flex:1;height:8px;background:#111;border:2px solid #333;overflow:hidden;}
+.xp-fill{height:100%;background:repeating-linear-gradient(90deg,var(--y) 0px,var(--y) 4px,#b88a00 4px,#b88a00 8px);transition:width 0.4s steps(10);}
+.xp-val{font-family:'Press Start 2P',monospace;font-size:0.3rem;color:var(--muted);white-space:nowrap;}
+
+/* ── Buttons ── */
+.sec-lbl{
+  font-family:'Press Start 2P',monospace;font-size:0.38rem;
+  color:var(--muted);margin:4px 0 4px 2px;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.btn-grid{display:grid;gap:7px;}
+.btn-grid.g2{grid-template-columns:1fr 1fr;}
+.btn-grid.g3{grid-template-columns:1fr 1fr 1fr;}
+
+.btn{
+  position:relative;
+  background:var(--panel);
+  border:3px solid #333;
+  box-shadow:3px 3px 0 #000;
+  padding:9px 6px;cursor:pointer;
+  color:var(--text);
+  font-family:'Nunito',sans-serif;
+  font-weight:800;font-size:0.78rem;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  transition:transform 0.08s,box-shadow 0.08s;
+  overflow:hidden;user-select:none;
+  image-rendering:pixelated;
+}
+.btn:hover:not(.cooling){
+  transform:translate(-1px,-1px);
+  box-shadow:4px 4px 0 #000;
+}
+.btn:active:not(.cooling){
+  transform:translate(2px,2px);
+  box-shadow:1px 1px 0 #000;
+}
+.btn .e{font-size:1.3rem;line-height:1;}
+.btn .lbl{font-family:'Press Start 2P',monospace;font-size:0.32rem;text-align:center;line-height:1.5;color:#ccc;}
+.btn .risk{font-size:0.55rem;color:#f87171;font-weight:700;}
+.btn .good{font-size:0.55rem;color:#4ade80;font-weight:700;}
+
+.btn-feed  {border-color:#7a5e00;} .btn-feed:hover  {background:#1c1800;}
+.btn-wash  {border-color:#004a7a;} .btn-wash:hover  {background:#00111c;}
+.btn-sleep {border-color:#3a2a7a;} .btn-sleep:hover {background:#0d0a1c;}
+.btn-medic {border-color:#7a0000;} .btn-medic:hover {background:#1c0000;}
+.btn-play  {border-color:#6a006a;} .btn-play:hover  {background:#180018;}
+.btn-gym   {border-color:#007a3a;} .btn-gym:hover   {background:#001c0e;}
+.btn-tv    {border-color:#4a4a00;} .btn-tv:hover    {background:#111100;}
+.btn-junk  {border-color:#7a2000;} .btn-junk:hover  {background:#1c0800;}
+.btn-coffee{border-color:#5a3a00;} .btn-coffee:hover{background:#140d00;}
+
+.cd-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,0.75);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#fff;
+  opacity:0;transition:opacity 0.15s;pointer-events:none;
+}
+.btn.cooling{pointer-events:none;}
+.btn.cooling .cd-overlay{opacity:1;}
+
+/* ── CHAT ── */
+.chat-wrap{
+  background:var(--panel);
+  border:3px solid var(--g);
+  box-shadow:4px 4px 0 #000;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.chat-header{
+  background:var(--g);
+  padding:6px 10px;
+  font-family:'Press Start 2P',monospace;font-size:0.45rem;
+  color:#fff;text-shadow:1px 1px 0 #000;
+  display:flex;align-items:center;gap:6px;
+  flex-shrink:0;
+}
+.chat-log{
+  height:160px;overflow-y:auto;
+  padding:8px 10px;
+  display:flex;flex-direction:column;gap:6px;
+  background:var(--chat-bg);
+  flex-shrink:0;
+}
+.chat-log::-webkit-scrollbar{width:6px;}
+.chat-log::-webkit-scrollbar-track{background:#111;}
+.chat-log::-webkit-scrollbar-thumb{background:#333;border:1px solid #000;}
+
+/* Chat messages */
+.msg{
+  display:flex;align-items:flex-end;gap:6px;
+  animation:msgIn 0.15s steps(3) forwards;
+}
+@keyframes msgIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.msg.user{flex-direction:row-reverse;}
+.msg-bubble{
+  max-width:72%;
+  padding:5px 9px;
+  font-family:'Press Start 2P',monospace;font-size:0.32rem;
+  line-height:1.8;border:2px solid #000;
+  box-shadow:2px 2px 0 #000;
+}
+.msg.noob .msg-bubble{
+  background:var(--g);color:#fff;
+  border-color:#000;
+}
+.msg.user .msg-bubble{
+  background:#1a50c0;color:#fff;
+  border-color:#000;
+}
+.msg-avatar{
+  width:28px;height:28px;flex-shrink:0;
+  border:2px solid #000;box-shadow:2px 2px 0 #000;
+}
+
+/* Chat input row */
+.chat-bottom{
+  display:flex;gap:0;border-top:3px solid var(--border);flex-shrink:0;
+}
+.phrase-scroll{
+  flex:1;overflow-x:auto;overflow-y:hidden;
+  display:flex;gap:0;
+  scrollbar-width:none;
+}
+.phrase-scroll::-webkit-scrollbar{display:none;}
+.phrase-btn{
+  flex-shrink:0;
+  background:var(--panel2);
+  border:none;border-right:2px solid var(--border);
+  padding:7px 10px;cursor:pointer;color:var(--text);
+  font-family:'Press Start 2P',monospace;font-size:0.3rem;
+  white-space:nowrap;transition:background 0.1s;
+  line-height:1.5;
+}
+.phrase-btn:hover{background:#2a2a2a;}
+.phrase-btn:active{background:var(--g);color:#fff;}
+
+/* toast */
+#toast{
+  position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(14px);
+  background:var(--panel2);
+  border:3px solid var(--border);box-shadow:3px 3px 0 #000;
+  padding:8px 16px;
+  font-family:'Press Start 2P',monospace;font-size:0.38rem;
+  opacity:0;transition:all 0.2s;pointer-events:none;z-index:200;
+  white-space:nowrap;max-width:90vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SVG animations ── */
+@keyframes idle{
+  0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}
+}
+@keyframes bounce{
+  0%,100%{transform:translateY(0);}30%{transform:translateY(-22px);}60%{transform:translateY(-9px);}
+}
+@keyframes dance{
+  0%,100%{transform:rotate(0);}
+  20%{transform:rotate(-13deg);}40%{transform:rotate(14deg)scaleX(-1);}
+  60%{transform:rotate(-9deg)scaleX(-1);}80%{transform:rotate(12deg);}
+}
+@keyframes sleeping{
+  0%,100%{transform:rotate(9deg)translateY(5px);}50%{transform:rotate(4deg)translateY(2px);}
+}
+@keyframes shakeAnim{
+  0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}
+  40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}
+}
+@keyframes workout{
+  0%,100%{transform:scaleY(1)translateY(0);}
+  30%{transform:scaleY(0.88)translateY(6px);}60%{transform:scaleY(1.05)translateY(-4px);}
+}
+@keyframes lvlUp{
+  0%{transform:scale(1);}40%{transform:scale(1.35)rotate(-5deg);}70%{transform:scale(1.2)rotate(5deg);}100%{transform:scale(1);}
+}
+@keyframes blink{
+  0%,94%,100%{transform:scaleY(1);}97%{transform:scaleY(0.05);}
+}
+@keyframes angryShake{
+  0%,100%{transform:rotate(0);}25%{transform:rotate(-4deg);}75%{transform:rotate(4deg);}
+}
+.noob-svg{
+  width:84px;display:block;margin:0 auto;
+  animation:idle 2.4s steps(8) infinite;
+  transition:filter 0.5s;
+  image-rendering:pixelated;
+}
+#eye-l,#eye-r{
+  animation:blink 4s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+#eye-r{animation-delay:0.08s;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- Header -->
+<div class="header">
+  <h1>🟩 NOOB CARE 🟩</h1>
+  <div class="header-sub">
+    <div class="badge">⭐ LVL <span id="lvl-num">1</span> – <span id="lvl-title">Anfänger</span></div>
+    <div class="badge green">TAG <span id="age-num">1</span></div>
+    <div class="badge blue" id="mood-txt">😄 Glücklich</div>
+  </div>
+</div>
+
+<!-- Arena + Stats side by side -->
+<div class="top-row">
+  <div class="left">
+    <div id="arena" onclick="arenaClick(event)">
+      <div class="ground"></div>
+      <div id="mood-ring">😄</div>
+
+      <div id="noob-wrap">
+        <div id="bubble"></div>
+
+        <!-- ═══ ROBLOX NOOB SVG ═══ -->
+        <svg id="noob-svg" class="noob-svg" viewBox="0 0 84 118" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <!-- Shadow -->
+          <rect x="18" y="114" width="48" height="4" rx="2" fill="#000" opacity="0.35"/>
+
+          <!-- FEET (black squares = Roblox style) -->
+          <rect x="21" y="108" width="18" height="8" rx="1" fill="#111"/>
+          <rect x="45" y="108" width="18" height="8" rx="1" fill="#111"/>
+
+          <!-- LEGS blue -->
+          <rect x="22" y="82" width="16" height="28" rx="2" fill="#1a50c0"/>
+          <rect x="46" y="82" width="16" height="28" rx="2" fill="#1a50c0"/>
+          <!-- Leg shading -->
+          <rect x="22" y="82" width="4" height="28" rx="0" fill="rgba(0,0,0,0.18)"/>
+          <rect x="46" y="82" width="4" height="28" rx="0" fill="rgba(0,0,0,0.18)"/>
+
+          <!-- LEFT ARM -->
+          <rect x="4" y="48" width="14" height="30" rx="2" fill="#1a50c0"/>
+          <rect x="4" y="48" width="4" height="30" rx="0" fill="rgba(0,0,0,0.15)"/>
+          <!-- Left hand -->
+          <rect x="4" y="76" width="14" height="10" rx="2" fill="#f5c518"/>
+
+          <!-- RIGHT ARM -->
+          <rect x="66" y="48" width="14" height="30" rx="2" fill="#1a50c0"/>
+          <rect x="76" y="48" width="4" height="30" rx="0" fill="rgba(0,0,0,0.15)"/>
+          <!-- Right hand -->
+          <rect x="66" y="76" width="14" height="10" rx="2" fill="#f5c518"/>
+
+          <!-- TORSO green -->
+          <rect x="18" y="46" width="48" height="38" rx="2" fill="#1a8c3c"/>
+          <!-- Torso shading left -->
+          <rect x="18" y="46" width="6" height="38" rx="0" fill="rgba(0,0,0,0.18)"/>
+          <!-- Shirt logo area -->
+          <rect x="32" y="54" width="20" height="14" rx="2" fill="rgba(255,255,255,0.08)"/>
+          <rect x="36" y="58" width="12" height="6" rx="1" fill="rgba(255,255,255,0.12)"/>
+
+          <!-- NECK -->
+          <rect x="34" y="38" width="16" height="10" rx="1" fill="#f5c518"/>
+
+          <!-- HEAD yellow -->
+          <rect x="16" y="8" width="52" height="32" rx="3" fill="#f5c518"/>
+          <!-- Head shading left -->
+          <rect x="16" y="8" width="7" height="32" rx="0" fill="rgba(0,0,0,0.10)"/>
+          <!-- Head highlight top -->
+          <rect x="16" y="8" width="52" height="4" rx="0" fill="rgba(255,255,255,0.12)"/>
+
+          <!-- HAT brim (flat black) -->
+          <rect x="11" y="7" width="62" height="5" rx="1" fill="#111"/>
+          <!-- HAT body -->
+          <rect x="19" y="0" width="46" height="9" rx="2" fill="#222"/>
+          <!-- HAT green stripe (Roblox noob hat detail) -->
+          <rect x="19" y="5" width="46" height="3" fill="#1a8c3c"/>
+          <!-- HAT highlight -->
+          <rect x="19" y="0" width="46" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
+
+          <!-- EYES -->
+          <g id="eye-l" transform-origin="29 24">
+            <rect x="24" y="18" width="12" height="13" rx="2" fill="#fff"/>
+            <rect x="27" y="21" width="7" height="7" rx="1" fill="#111"/>
+            <rect x="27" y="21" width="2" height="2" fill="rgba(255,255,255,0.7)"/>
+          </g>
+          <g id="eye-r" transform-origin="55 24">
+            <rect x="48" y="18" width="12" height="13" rx="2" fill="#fff"/>
+            <rect x="51" y="21" width="7" height="7" rx="1" fill="#111"/>
+            <rect x="51" y="21" width="2" height="2" fill="rgba(255,255,255,0.7)"/>
+          </g>
+
+          <!-- EYEBROWS -->
+          <rect id="brow-l" x="24" y="15" width="12" height="3" rx="1" fill="#8a6010"/>
+          <rect id="brow-r" x="48" y="15" width="12" height="3" rx="1" fill="#8a6010"/>
+
+          <!-- MOUTH (smile default) -->
+          <path id="mouth-path" d="M 28 33 Q 42 41 56 33" stroke="#7a4010" stroke-width="3" fill="none" stroke-linecap="square"/>
+
+          <!-- BLUSH -->
+          <rect id="blush-l" x="17" y="27" width="8" height="5" rx="1" fill="rgba(255,80,80,0.38)" opacity="0"/>
+          <rect id="blush-r" x="59" y="27" width="8" height="5" rx="1" fill="rgba(255,80,80,0.38)" opacity="0"/>
+
+          <!-- SWEAT -->
+          <polygon id="sweat" points="60,12 63,8 66,12 63,18" fill="rgba(56,180,255,0.85)" opacity="0"/>
+
+          <!-- SICK tint -->
+          <rect id="sick-ov" x="16" y="8" width="52" height="32" rx="3" fill="rgba(80,220,80,0)" pointer-events="none"/>
+
+          <!-- SLEEP Zs -->
+          <text id="sz1" x="65" y="20" font-family="Press Start 2P,monospace" font-size="10" fill="#a78bfa" opacity="0">z</text>
+          <text id="sz2" x="71" y="11" font-family="Press Start 2P,monospace" font-size="7"  fill="#a78bfa" opacity="0">z</text>
+
+          <!-- TEARS -->
+          <rect id="tear-l" x="26" y="30" width="3" height="6" rx="1" fill="rgba(56,180,255,0.85)" opacity="0"/>
+          <rect id="tear-r" x="55" y="30" width="3" height="6" rx="1" fill="rgba(56,180,255,0.85)" opacity="0"/>
+
+          <!-- ANGRY eyebrows overlay -->
+          <rect id="abrow-l" x="24" y="15" width="12" height="3" rx="0" fill="#7a0000" opacity="0" transform="rotate(-8,30,16)"/>
+          <rect id="abrow-r" x="48" y="15" width="12" height="3" rx="0" fill="#7a0000" opacity="0" transform="rotate(8,54,16)"/>
+        </svg>
+        <div class="noob-shadow"></div>
+      </div>
+
+      <div id="dead-screen">
+        <div style="font-size:2.5rem">💀</div>
+        <h2>GAME OVER</h2>
+        <p>Noob ist gestorben.<br>Du warst ein schlechter Freund.</p>
+        <button id="revive-btn">▶ NEU STARTEN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats sidebar -->
+  <div class="right">
+    <div class="stats-panel" style="height:100%;">
+      <div class="stat-row"><span class="stat-icon">🍔</span><span class="stat-lbl">Hunger</span><div class="bar-track"><div class="bar-fill" id="b-hunger" style="width:80%;background:#f5c518"></div></div><span class="stat-val" id="v-hunger">80</span></div>
+      <div class="stat-row"><span class="stat-icon">⚡</span><span class="stat-lbl">Energie</span><div class="bar-track"><div class="bar-fill" id="b-energy" style="width:80%;background:#38bdf8"></div></div><span class="stat-val" id="v-energy">80</span></div>
+      <div class="stat-row"><span class="stat-icon">🎉</span><span class="stat-lbl">Spaß</span><div class="bar-track"><div class="bar-fill" id="b-fun" style="width:80%;background:#f472b6"></div></div><span class="stat-val" id="v-fun">80</span></div>
+      <div class="stat-row"><span class="stat-icon">❤️</span><span class="stat-lbl">Leben</span><div class="bar-track"><div class="bar-fill" id="b-health" style="width:90%;background:#f87171"></div></div><span class="stat-val" id="v-health">90</span></div>
+      <div class="stat-row"><span class="stat-icon">🧹</span><span class="stat-lbl">Hygiene</span><div class="bar-track"><div class="bar-fill" id="b-hygiene" style="width:90%;background:#a3e635"></div></div><span class="stat-val" id="v-hygiene">90</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- XP -->
+<div class="xp-row">
+  <span class="xp-lbl">⭐ XP</span>
+  <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  <span class="xp-val" id="xp-val">0/100</span>
+</div>
+
+<!-- Action Buttons -->
+<div class="sec-lbl">▶ PFLEGE</div>
+<div class="btn-grid g2">
+  <button class="btn btn-feed" id="btn-feed" onclick="doFeed()">
+    <span class="e">🍔</span><span class="lbl">FÜTTERN</span>
+    <span class="good">+Hunger</span><span class="risk">-Hygiene</span>
+    <div class="cd-overlay" id="cd-feed"></div>
+  </button>
+  <button class="btn btn-wash" id="btn-wash" onclick="doWash()">
+    <span class="e">🚿</span><span class="lbl">WASCHEN</span>
+    <span class="good">+Hygiene +Spaß</span>
+    <div class="cd-overlay" id="cd-wash"></div>
+  </button>
+  <button class="btn btn-sleep" id="btn-sleep" onclick="doSleep()">
+    <span class="e">😴</span><span class="lbl">SCHLAFEN</span>
+    <span class="good">+Energie +Leben</span>
+    <div class="cd-overlay" id="cd-sleep"></div>
+  </button>
+  <button class="btn btn-medic" id="btn-medic" onclick="doMedic()">
+    <span class="e">💊</span><span class="lbl">ARZT</span>
+    <span class="good">+Leben</span><span class="risk">-Energie</span>
+    <div class="cd-overlay" id="cd-medic"></div>
+  </button>
+</div>
+
+<div class="sec-lbl">▶ AKTIVITÄTEN</div>
+<div class="btn-grid g3">
+  <button class="btn btn-play" id="btn-play" onclick="doPlay()">
+    <span class="e">🎮</span><span class="lbl">SPIELEN</span>
+    <span class="good">+Spaß</span><span class="risk">-Energie</span>
+    <div class="cd-overlay" id="cd-play"></div>
+  </button>
+  <button class="btn btn-gym" id="btn-gym" onclick="doGym()">
+    <span class="e">💪</span><span class="lbl">SPORT</span>
+    <span class="good">+Leben</span><span class="risk">Verletzung!</span>
+    <div class="cd-overlay" id="cd-gym"></div>
+  </button>
+  <button class="btn btn-tv" id="btn-tv" onclick="doTV()">
+    <span class="e">📺</span><span class="lbl">TV</span>
+    <span class="good">+Spaß</span><span class="risk">-Energie -Hyg</span>
+    <div class="cd-overlay" id="cd-tv"></div>
+  </button>
+</div>
+
+<div class="sec-lbl">▶ RISIKO</div>
+<div class="btn-grid g2">
+  <button class="btn btn-junk" id="btn-junk" onclick="doJunk()">
+    <span class="e">🍕</span><span class="lbl">JUNKFOOD</span>
+    <span class="good">+Hunger +Spaß</span><span class="risk">-Leben (30%)</span>
+    <div class="cd-overlay" id="cd-junk"></div>
+  </button>
+  <button class="btn btn-coffee" id="btn-coffee" onclick="doCoffee()">
+    <span class="e">⚡</span><span class="lbl">ENERGY DRINK</span>
+    <span class="good">+Energie</span><span class="risk">Schlaf gesperrt!</span>
+    <div class="cd-overlay" id="cd-coffee"></div>
+  </button>
+</div>
+
+<!-- ═══ CHAT ═══ -->
+<div class="sec-lbl">▶ CHAT MIT NOOB</div>
+<div class="chat-wrap">
+  <div class="chat-header">
+    💬 NOOB_CHAT [ONLINE]
+  </div>
+  <div class="chat-log" id="chat-log">
+    <!-- messages appear here -->
+  </div>
+  <div class="chat-bottom">
+    <div class="phrase-scroll" id="phrase-scroll">
+      <!-- phrase buttons injected by JS -->
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+<div id="toast"></div>
+
+<script>
+// ─── State ─────────────────────────────────────────────────────────────────
+let hunger=80,energy=80,fun=80,health=90,hygiene=90;
+let xp=0,level=1,day=1,dayTick=0;
+let isDead=false,sleepMode=false,isSick=false,caffeine=0;
+const LEVELS=['Anfänger','Lehrling','Entdecker','Held','Legende','Gott-Noob'];
+const XP_PER=100;
+
+// ─── Chat phrase database (30 inputs, keyword-matched) ─────────────────────
+const CHAT_RESPONSES = [
+  // Zuneigung / Freundlichkeit
+  { keys:['ich mag dich','ich liebe dich','du bist toll','du bist süß','du bist nett'], ans:['Danke!! 😊 Du bist mein bester Freund!','Aww danke! Ich mag dich auch! 💚','Du bist der Beste! (außer mir natürlich)'], mood:'happy', stat:()=>{fun=clamp(fun+10);} },
+  { keys:['hallo','hi','hey','guten tag','servus','moin'], ans:['HALLO!! Endlich bist du da!','Hey hey hey! 😄','Hi! Ich hab auf dich gewartet!','Heyyyy! Spielen wir zusammen?'], mood:'happy', stat:()=>{}  },
+  { keys:['wie geht es dir','wie geht\'s','was machst du'], ans:['Mir geht\'s gut! Wenn du mich fütterst noch besser...','Ich langweile mich ehrlich gesagt 😐','Ich könnte schlafen... oder essen... beides wäre gut','Super! Jetzt wo du da bist!'], mood:'neutral', stat:()=>{} },
+  { keys:['tschüss','tschau','auf wiedersehen','bye','ciao'], ans:['NEIN! Geh nicht!! 😢','Bitte bleib... ich bin noch da...','Bye... (weint leise)','Ciao! Aber vergiss mich nicht okay?!'], mood:'sad', stat:()=>{fun=clamp(fun-8);} },
+  { keys:['du bist hässlich','du bist dumm','du siehst komisch aus','du stinkst'], ans:['...das war gemein 😢','ICH STINKE NICHT! ...vielleicht ein bisschen','Du bist nicht nett!','Ich weine jetzt. Danke dafür.','Das verletzt meine Gefühle!! 😤'], mood:'sad', stat:()=>{fun=clamp(fun-15);health=clamp(health-5);} },
+
+  // Beleidigungen / Streit
+  { keys:['noobs können nix','noobs sind schlecht','noobs sind dumm','noobs suck'], ans:['DU BIST DOOF!! 😡','Ich bin kein NORMALER Noob!','Oh wirklich?! Dann kämpf mich!','Ich zeig dir was Noobs können!! *fällt hin*'], mood:'angry', stat:()=>{fun=clamp(fun-12);} },
+  { keys:['git gud','skill issue','du kannst nicht spielen','du verlierst immer'], ans:['GIT GUD?! ICH BIN DER GIT-GUDESTE!','Skill issue?! Das bin ICH nicht!','...okay vielleicht ein bisschen 😤','Ich übe noch OKAY?!'], mood:'angry', stat:()=>{} },
+  { keys:['du wirst nie gut','aufgeben','gib auf'], ans:['NIEMALS!! Noob gibt nie auf!','Aufgeben? Das Wort kenne ich nicht!','Ich gebe auf... nein warte, NIEMALS!'], mood:'angry', stat:()=>{fun=clamp(fun+5);} },
+  { keys:['hau ab','verschwinde','ich will dich nicht'], ans:['Du kannst mich nicht wegschicken, ich WOHNE hier!','...😢 okay ich geh... (geht nicht)','Das war nicht nett. Ich bleibe trotzdem.'], mood:'sad', stat:()=>{fun=clamp(fun-18);health=clamp(health-5);} },
+  { keys:['du bist nervös','du machst mich nervös','hör auf'], ans:['ICH MAche DICH nervös?!','Sorry sorry sorry!!!','...war das meine Schuld?','Ich versuche besser zu sein 😓'], mood:'sad', stat:()=>{} },
+
+  // Hunger / Essen
+  { keys:['bist du hungrig','hast du hunger','willst du essen'], ans:['JA!! BITTE!! SOFORT!','Ich sterbe fast vor Hunger!! Fast.','Ja bitte... mein Magen grummelt schon','Hunger? Ich? Immer.'], mood:'excited', stat:()=>{} },
+  { keys:['hier ist essen','ich bringe dir essen','hier hast du was'], ans:['JAAAA DANKE! 🍔🍔🍔','Endlich!! Mein Held!','Nomnomnomnom!! Du bist der Beste!'], mood:'excited', stat:()=>{hunger=clamp(hunger+15);} },
+  { keys:['kein essen','du bekommst nichts','du kriegst kein essen'], ans:['...bitte?','Das ist Folter!! Hungerstreik!!','Ich schaue dich traurig an 🥺','Ich fresse dann die Möbel'], mood:'sad', stat:()=>{hunger=clamp(hunger-10);} },
+
+  // Schlafen / Energie
+  { keys:['geh schlafen','du solltest schlafen','es ist spät'], ans:['Ich bin nicht müde!!','Nein! Noch 5 Minuten!','...okay vielleicht ein bisschen *gähnt*','Schlaf ist für Schwache. (Schläft sofort ein)'], mood:'neutral', stat:()=>{} },
+  { keys:['bist du müde','hast du geschlafen','wann hast du geschlafen'], ans:['Ich bin KOMPLETT ausgeruht!! *schläft fast ein*','Wann habe ich zuletzt geschlafen... gute Frage','Schlaf? Kenn ich. Mach ich gelegentlich.'], mood:'neutral', stat:()=>{} },
+
+  // Spielen / Roblox
+  { keys:['spielen wir','lass uns spielen','wollen wir spielen'], ans:['JA!! LASS UNS SPIELEN!! 🎮','ROBLOX!! SOFORT!!','Ich bin dabei! Was spielen wir?!','Endlich!! Ich war so gelangweilt!'], mood:'excited', stat:()=>{fun=clamp(fun+12);energy=clamp(energy-8);} },
+  { keys:['roblox ist toll','roblox ist das beste','roblox forever'], ans:['ROBLOX!! 🟩🟩🟩','Du verstehst es! Roblox = Leben!','Das ist das Klügste was du je gesagt hast!','Roblox forever!! Noob forever!!'], mood:'excited', stat:()=>{fun=clamp(fun+10);} },
+  { keys:['roblox ist schlecht','roblox ist langweilig','minecraft ist besser'], ans:['DAS NEHME ICH SEHR PERSÖNLICH!!','Minecraft?! MINECRAFFT?!?!','...Ich rede nicht mehr mit dir.','Du brichst mir das Herz 💔'], mood:'angry', stat:()=>{fun=clamp(fun-15);} },
+  { keys:['was ist dein lieblingsspiel','was spielst du am liebsten'], ans:['ROBLOX!! Immer Roblox!','Roblox Bedwars! Und Adopt Me! Und alles!','Obwohl... ich auch gerne esse. Ist das ein Spiel?'], mood:'happy', stat:()=>{} },
+  { keys:['du bist mein lieblingsnoob','du bist der beste noob'], ans:['ICH BIN DER BESTE NOOB!! 🏆','Danke danke danke!! Du bist der Klügste!','Endlich erkennt jemand meinen Wert!','Ich weine vor Freude 😭💚'], mood:'excited', stat:()=>{fun=clamp(fun+15);health=clamp(health+5);} },
+
+  // Gesundheit / Hygiene
+  { keys:['geh duschen','du musst duschen','wann hast du geduscht'], ans:['Ich... dusche regelmäßig!! Meistens.','Duschen?! Seit wann machst du das?','Ich werde es... eventuell... irgendwann tun.','OKAY OKAY ich geh duschen!'], mood:'neutral', stat:()=>{} },
+  { keys:['bist du krank','geht es dir gut','du siehst krank aus'], ans:['Mir geht\'s... eigentlich gut... vielleicht','Krank? Ich? Noobs werden NICHT krank!','Nur ein bisschen krank... nichts schlimmes','Mein Kopf dreht sich ein bisschen... 🤢'], mood:'sick', stat:()=>{} },
+  { keys:['geh zum arzt','du brauchst einen arzt','arzt'], ans:['KEIN ARZT!! Die geben mir Spritzen!!','Muss das sein...?','Okay okay... aber du kommst mit!','Ärzte sind SCHMERZHAFT'], mood:'neutral', stat:()=>{} },
+
+  // Komplimente & Fun
+  { keys:['du bist lustig','du machst mich lachen','haha','lol','xd'], ans:['Ich weiß ich bin witzig 😎','Haha! Ich weiß! (weiß ich nicht)','Mein bester Witz: Warum ist Noob grün? Weil Grün cool ist.','xD xD xD ICH AUCH xD'], mood:'happy', stat:()=>{fun=clamp(fun+8);} },
+  { keys:['was ist deine lieblingsfarbe','welche farbe magst du'], ans:['GRÜN natürlich!! 🟩','Grün! Genau wie ich!','Grün > alle anderen Farben. Fakten.','Grün. Blau. Gelb. Also... ich bin meine eigene Lieblingsfarbe!'], mood:'happy', stat:()=>{} },
+  { keys:['wie alt bist du','wann wurdest du geboren'], ans:['Ich bin ewig alt! Ich bin Noob!','Ich bin so alt wie Roblox selbst!','Alter ist nur eine Zahl... ich vergesse meine Zahl'], mood:'neutral', stat:()=>{} },
+  { keys:['was ist dein name','wie heißt du','dein name'], ans:['Ich bin NOOB! Das bekannte!','Noob. Einfach Noob. 🟩','Mein Name ist Noob und ich bin stolz drauf!','N-O-O-B. Noob. Ist doch klar!'], mood:'happy', stat:()=>{} },
+  { keys:['ich vermisse dich','ich hab an dich gedacht','du fehlst mir'], ans:['ICH WAR IMMER HIER!! 😭','Awww ich vermisse dich auch!!','Ich fühle mein Herz... oder ist das Hunger?','Du dachtest an MICH?! Ich bin gerührt!'], mood:'excited', stat:()=>{fun=clamp(fun+12);} },
+  { keys:['du bist mein freund','wir sind freunde','beste freunde'], ans:['BESTE FREUNDE FÜR IMMER!! 💚🟩','YAY! BFF!! Best Friends Forever!!','Ich werde IMMER für dich da sein (wenn du mich fütterst)','Freunde!! Das macht mich so glücklich! 😭'], mood:'excited', stat:()=>{fun=clamp(fun+15);health=clamp(health+5);} },
+  { keys:['ich bin dein feind','ich hasse dich','wir sind keine freunde'], ans:['...das tut weh 😢','Feinde?! Aber ich dachte...','Okay... ich werde trotzdem für dich da sein 😢','Ich weine jetzt offiziell.'], mood:'sad', stat:()=>{fun=clamp(fun-20);health=clamp(health-8);} },
+];
+
+// Fallback wenn nichts matched
+const FALLBACKS = [
+  'Ich verstehe das nicht... bin halt Noob 😅',
+  '...was?',
+  'Hm. Das ist... eine Aussage.',
+  'Ich verarbeite noch... 🤔',
+  'Noob.exe denkt nach...',
+  'Interessant. Sehr interessant.',
+  'Das ist zu klug für mich ehrlich gesagt',
+  '404: Antwort nicht gefunden',
+  'Bitte in einfachem Noob-Deutsch sprechen',
+];
+
+// ─── Chat system ────────────────────────────────────────────────────────────
+const PHRASES_LIST = [
+  'Ich mag dich','Hallo!','Wie geht\'s dir?','Spielen wir Roblox!',
+  'Noobs können nix','Geh duschen','Bist du hungrig?','Hier ist Essen',
+  'Git gud','Du bist toll','Geh schlafen','Tschüss!',
+  'Roblox ist das Beste!','Du bist lustig','Ich vermisse dich',
+  'Hau ab!','Du bist mein Freund','Was ist dein Name?',
+  'Bist du krank?','Lass uns spielen!','Kein Essen für dich',
+  'Du bist hässlich','Wir sind beste Freunde!','Ich hasse dich',
+  'Du bist der beste Noob!','Welche Farbe magst du?','Wie alt bist du?',
+  'Arzt!','Ich bin dein Feind','Minecraft ist besser'
+];
+
+function initChatPhrases(){
+  const scroll=document.getElementById('phrase-scroll');
+  PHRASES_LIST.forEach(phrase=>{
+    const btn=document.createElement('button');
+    btn.className='phrase-btn';
+    btn.textContent=phrase;
+    btn.onclick=()=>sendPhrase(phrase);
+    scroll.appendChild(btn);
+  });
+}
+
+// Tiny noob avatar for chat
+function noobAvatarSVG(size=28){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+    <rect x="6" y="20" width="7" height="7" rx="1" fill="#1a50c0"/>
+    <rect x="15" y="20" width="7" height="7" rx="1" fill="#1a50c0"/>
+    <rect x="2" y="12" width="5" height="9" rx="1" fill="#1a50c0"/>
+    <rect x="21" y="12" width="5" height="9" rx="1" fill="#1a50c0"/>
+    <rect x="7" y="11" width="14" height="11" rx="1" fill="#1a8c3c"/>
+    <rect x="7" y="4" width="14" height="8" rx="1" fill="#f5c518"/>
+    <rect x="5" y="3" width="18" height="2" rx="0" fill="#111"/>
+    <rect x="8" y="1" width="12" height="3" rx="1" fill="#222"/>
+    <rect x="8" y="3" width="12" height="1" fill="#1a8c3c"/>
+    <rect x="9" y="5" width="3" height="3" rx="0" fill="#fff"/>
+    <rect x="16" y="5" width="3" height="3" rx="0" fill="#fff"/>
+    <rect x="10" y="6" width="2" height="2" rx="0" fill="#111"/>
+    <rect x="17" y="6" width="2" height="2" rx="0" fill="#111"/>
+    <path d="M 9 11 Q 14 14 19 11" stroke="#7a4010" stroke-width="1.5" fill="none" stroke-linecap="square"/>
+  </svg>`;
+}
+
+function userAvatarSVG(size=28){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+    <rect width="28" height="28" rx="2" fill="#1a50c0"/>
+    <rect x="10" y="6" width="8" height="8" rx="1" fill="#f5c518"/>
+    <rect x="6" y="18" width="16" height="8" rx="1" fill="#f5c518"/>
+    <rect x="11" y="7" width="2" height="2" fill="#111"/>
+    <rect x="15" y="7" width="2" height="2" fill="#111"/>
+    <path d="M 10 13 Q 14 16 18 13" stroke="#7a4010" stroke-width="1.5" fill="none" stroke-linecap="square"/>
+  </svg>`;
+}
+
+const chatLog=document.getElementById('chat-log');
+
+function addMsg(text,isNoob,mood){
+  const div=document.createElement('div');
+  div.className='msg '+(isNoob?'noob':'user');
+
+  const avatar=document.createElement('div');
+  avatar.className='msg-avatar';
+  avatar.innerHTML=isNoob?noobAvatarSVG():userAvatarSVG();
+  avatar.style.background='transparent';
+  avatar.style.border='none';
+  avatar.style.boxShadow='none';
+
+  const bubble=document.createElement('div');
+  bubble.className='msg-bubble';
+  bubble.textContent=text;
+
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chatLog.appendChild(div);
+  chatLog.scrollTop=chatLog.scrollHeight;
+
+  if(isNoob && mood){
+    setExpr(mood);
+    setTimeout(()=>updateMood(),3000);
+  }
+}
+
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function sendPhrase(phrase){
+  if(isDead) return;
+  addMsg(phrase,false);
+
+  const lower=phrase.toLowerCase();
+  let matched=null;
+  for(const r of CHAT_RESPONSES){
+    if(r.keys.some(k=>lower.includes(k))){matched=r;break;}
+  }
+
+  setTimeout(()=>{
+    const response=matched?pick(matched.ans):pick(FALLBACKS);
+    const mood=matched?matched.mood:'neutral';
+    if(matched && matched.stat) matched.stat();
+    addMsg(response,true,mood);
+    showBubble(response.length>40?response.substring(0,37)+'...':response,2800);
+    updateBars();updateMood();
+  },400+Math.random()*400);
+}
+
+// ─── DOM refs ───────────────────────────────────────────────────────────────
+const noobSvg=document.getElementById('noob-svg');
+const noobWrap=document.getElementById('noob-wrap');
+const bubbleEl=document.getElementById('bubble');
+const arena=document.getElementById('arena');
+const moodRing=document.getElementById('mood-ring');
+const deadScr=document.getElementById('dead-screen');
+const toastEl=document.getElementById('toast');
+
+function clamp(v){return Math.max(0,Math.min(100,v));}
+function avgStat(){return(hunger+energy+fun)/3;}
+
+// ─── Bars ────────────────────────────────────────────────────────────────────
+const origC={hunger:'#f5c518',energy:'#38bdf8',fun:'#f472b6',health:'#f87171',hygiene:'#a3e635'};
+function updateBars(){
+  [{k:'hunger',v:hunger},{k:'energy',v:energy},{k:'fun',v:fun},{k:'health',v:health},{k:'hygiene',v:hygiene}]
+  .forEach(({k,v})=>{
+    document.getElementById('b-'+k).style.width=v+'%';
+    document.getElementById('b-'+k).style.background=v<25?'#e03030':v<45?'#f59e0b':origC[k];
+    document.getElementById('v-'+k).textContent=Math.round(v);
+  });
+}
+function updateXP(){
+  const pct=(xp%XP_PER)/XP_PER*100;
+  document.getElementById('xp-fill').style.width=pct+'%';
+  document.getElementById('xp-val').textContent=(xp%XP_PER)+'/'+XP_PER;
+}
+function gainXP(n){
+  xp+=n;
+  const nl=Math.floor(xp/XP_PER)+1;
+  if(nl>level){
+    level=nl;
+    const t=LEVELS[Math.min(level-1,LEVELS.length-1)];
+    document.getElementById('lvl-num').textContent=level;
+    document.getElementById('lvl-title').textContent=t;
+    showToast('🎉 LEVEL UP! Du bist jetzt: '+t.toUpperCase()+'!');
+    spawnParticles(10,['⭐','✨','💫','🟩','💚']);
+    animNoob('lvlUp 0.7s steps(6)');
+  }
+  updateXP();
+}
+
+// ─── Bubble ──────────────────────────────────────────────────────────────────
+let bT;
+function showBubble(txt,dur=2600){
+  clearTimeout(bT);
+  bubbleEl.textContent=txt;
+  bubbleEl.classList.add('show');
+  bT=setTimeout(()=>bubbleEl.classList.remove('show'),dur);
+}
+let tT;
+function showToast(msg){
+  clearTimeout(tT);
+  toastEl.textContent=msg;
+  toastEl.classList.add('show');
+  tT=setTimeout(()=>toastEl.classList.remove('show'),3000);
+}
+
+// ─── Particles ───────────────────────────────────────────────────────────────
+function spawnParticles(count,pool){
+  const rect=arena.getBoundingClientRect();
+  const nr=noobWrap.getBoundingClientRect();
+  const bx=nr.left-rect.left+42,by=nr.top-rect.top+10;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='particle';p.textContent=pick(pool);
+      p.style.fontSize=(0.7+Math.random()*0.8)+'rem';
+      p.style.left=(bx+Math.random()*70-20)+'px';
+      p.style.top=(by+Math.random()*30-5)+'px';
+      arena.appendChild(p);setTimeout(()=>p.remove(),1600);
+    },i*65);
+  }
+}
+
+// ─── Noob anim ───────────────────────────────────────────────────────────────
+let animT;
+function animNoob(str){
+  clearTimeout(animT);
+  noobSvg.style.animation=str;
+  const dur=parseFloat(str.split(' ')[1])*1000;
+  animT=setTimeout(()=>{
+    if(!sleepMode) noobSvg.style.animation='idle 2.4s steps(8) infinite';
+  },dur+50);
+}
+
+// ─── Expressions ─────────────────────────────────────────────────────────────
+function setExpr(mood){
+  const mp=document.getElementById('mouth-path');
+  const bl=document.getElementById('blush-l'),br=document.getElementById('blush-r');
+  const sw=document.getElementById('sweat');
+  const so=document.getElementById('sick-ov');
+  const brl=document.getElementById('brow-l'),brr=document.getElementById('brow-r');
+  const abl=document.getElementById('abrow-l'),abr=document.getElementById('abrow-r');
+  const sz=document.getElementById('sz1'),sz2=document.getElementById('sz2');
+  const tl=document.getElementById('tear-l'),tr=document.getElementById('tear-r');
+
+  bl.setAttribute('opacity','0');br.setAttribute('opacity','0');
+  sw.setAttribute('opacity','0');so.setAttribute('fill','rgba(80,220,80,0)');
+  sz.setAttribute('opacity','0');sz2.setAttribute('opacity','0');
+  tl.setAttribute('opacity','0');tr.setAttribute('opacity','0');
+  abl.setAttribute('opacity','0');abr.setAttribute('opacity','0');
+  brl.setAttribute('y','15');brr.setAttribute('y','15');
+
+  if(mood==='happy'){
+    mp.setAttribute('d','M 27 33 Q 42 43 57 33');
+    bl.setAttribute('opacity','1');br.setAttribute('opacity','1');
+  } else if(mood==='excited'){
+    mp.setAttribute('d','M 25 32 Q 42 45 59 32');
+    bl.setAttribute('opacity','1');br.setAttribute('opacity','1');
+  } else if(mood==='sad'){
+    mp.setAttribute('d','M 27 38 Q 42 31 57 38');
+    brl.setAttribute('y','17');brr.setAttribute('y','17');
+    tl.setAttribute('opacity','0.9');tr.setAttribute('opacity','0.9');
+  } else if(mood==='neutral'){
+    mp.setAttribute('d','M 29 36 Q 42 37 55 36');
+  } else if(mood==='sick'){
+    mp.setAttribute('d','M 27 38 Q 42 34 57 38');
+    so.setAttribute('fill','rgba(80,220,80,0.22)');
+    sw.setAttribute('opacity','1');
+    brl.setAttribute('y','17');brr.setAttribute('y','17');
+  } else if(mood==='sleep'){
+    mp.setAttribute('d','M 32 35 Q 42 38 52 35');
+    sz.setAttribute('opacity','1');sz2.setAttribute('opacity','1');
+  } else if(mood==='angry'){
+    mp.setAttribute('d','M 27 38 Q 42 32 57 38');
+    abl.setAttribute('opacity','1');abr.setAttribute('opacity','1');
+    brl.setAttribute('y','18');brr.setAttribute('y','18');
+    sw.setAttribute('opacity','0.6');
+  }
+}
+
+// ─── Mood ─────────────────────────────────────────────────────────────────────
+function updateMood(){
+  const a=avgStat();
+  let emoji,expr,txt;
+  if(isDead){emoji='💀';expr='sad';txt='💀 Tot';}
+  else if(isSick){emoji='🤢';expr='sick';txt='🤢 Krank';}
+  else if(a>75){emoji='😄';expr='happy';txt='😄 Glücklich';}
+  else if(a>55){emoji='🙂';expr='neutral';txt='🙂 Ok';}
+  else if(a>35){emoji='😟';expr='sad';txt='😟 Traurig';}
+  else{emoji='😢';expr='sad';txt='😢 Verzweifelt';}
+  moodRing.textContent=emoji;
+  document.getElementById('mood-txt').textContent=txt;
+  if(!sleepMode) setExpr(expr);
+  const g=a<30?0.7:a<50?0.25:0;
+  const sick=isSick?'hue-rotate(60deg) brightness(0.85)':'';
+  if(!isDead) noobSvg.style.filter=`grayscale(${g}) ${sick}`;
+}
+
+// ─── Cooldown ─────────────────────────────────────────────────────────────────
+function startCD(btnId,cdId,secs){
+  const btn=document.getElementById(btnId);
+  const cd=document.getElementById(cdId);
+  btn.classList.add('cooling');let r=secs;
+  cd.textContent=r+'s';
+  const t=setInterval(()=>{r--;if(r<=0){clearInterval(t);btn.classList.remove('cooling');cd.textContent='';}else cd.textContent=r+'s';},1000);
+}
+
+// ─── Move ─────────────────────────────────────────────────────────────────────
+noobWrap.style.left='155px';noobWrap.style.bottom='60px';
+function moveNoob(){
+  if(isDead||sleepMode) return;
+  noobWrap.style.left=(Math.random()*240+10)+'px';
+  noobWrap.style.bottom=(Math.random()*80+58)+'px';
+}
+setInterval(moveNoob,5000);
+
+// Auto speech
+const AUTO_PHRASES=[
+  'oof...','Noob life 🟩','Ich hab Hunger...','Spielen? Bitte?',
+  'Wann kommen wir an?','Was ist Zeit?','Ich steh hier nur so rum',
+  'Hat jemand Essen?','Roblox Roblox Roblox','Ich denke also bin ich... Noob',
+  'Bitte nicht weggehen','Ich bin nicht müde!! *gähnt*',
+  'Grüner Block = Ich','Skill issue? Nein!','Hilfe. Bitte. Danke.',
+];
+setInterval(()=>{
+  if(!isDead&&Math.random()<0.35) showBubble(pick(AUTO_PHRASES));
+},7000);
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+function doFeed(){if(isDead)return;sleepMode=false;hunger=clamp(hunger+28);hygiene=clamp(hygiene-6);gainXP(8);showBubble('Yum! 🍔');setExpr('happy');animNoob('bounce 0.6s steps(6)');spawnParticles(5,['🍔','😋','✨']);updateBars();updateMood();startCD('btn-feed','cd-feed',5);}
+function doWash(){if(isDead)return;sleepMode=false;hygiene=clamp(hygiene+36);fun=clamp(fun+8);health=clamp(health+5);gainXP(7);showBubble('Sauber! 🚿');setExpr('happy');animNoob('shakeAnim 0.5s steps(6)');spawnParticles(6,['💧','✨','🧼']);updateBars();updateMood();startCD('btn-wash','cd-wash',5);}
+function doSleep(){
+  if(isDead)return;
+  if(caffeine>1){showBubble('Zu aufgedreht!! 😵');showToast('⚡ Energy Drink – Schlaf gesperrt!');animNoob('shakeAnim 0.4s steps(4)');return;}
+  sleepMode=true;energy=100;health=clamp(health+12);isSick=false;gainXP(10);showBubble('Zzz... 😴');setExpr('sleep');
+  noobSvg.style.animation='sleeping 2s steps(6) infinite';
+  spawnParticles(4,['💤','⭐','😴']);updateBars();updateMood();startCD('btn-sleep','cd-sleep',10);
+  setTimeout(()=>{sleepMode=false;noobSvg.style.animation='idle 2.4s steps(8) infinite';setExpr('neutral');updateMood();},10000);
+}
+function doPlay(){if(isDead)return;sleepMode=false;fun=clamp(fun+22);energy=clamp(energy-12);gainXP(12);showBubble('Weee! 🎮');setExpr('excited');animNoob('dance 1s steps(8)');spawnParticles(9,['🎮','🎉','⭐','💖','🟩']);updateBars();updateMood();startCD('btn-play','cd-play',6);}
+function doGym(){
+  if(isDead)return;sleepMode=false;
+  if(Math.random()<0.22){health=clamp(health-25);energy=clamp(energy-20);isSick=true;showBubble('OW!! Verletzt!! 😢');showToast('💥 Verletzung! Leben –25');setExpr('angry');animNoob('shakeAnim 0.5s steps(4)');spawnParticles(5,['💥','😢','❌']);}
+  else{health=clamp(health+18);energy=clamp(energy-15);fun=clamp(fun+5);gainXP(14);showBubble('STARK! 💪');setExpr('excited');animNoob('workout 0.8s steps(6)');spawnParticles(6,['💪','🔥','⭐']);}
+  updateBars();updateMood();startCD('btn-gym','cd-gym',8);
+}
+function doTV(){if(isDead)return;sleepMode=false;fun=clamp(fun+12);energy=clamp(energy-8);hygiene=clamp(hygiene-8);gainXP(4);showBubble('Kartoffelmode 📺');setExpr('neutral');spawnParticles(3,['📺','🛋️','😐']);updateBars();updateMood();startCD('btn-tv','cd-tv',5);}
+function doJunk(){
+  if(isDead)return;sleepMode=false;hunger=clamp(hunger+22);fun=clamp(fun+10);hygiene=clamp(hygiene-12);
+  if(Math.random()<0.3){health=clamp(health-20);isSick=true;showBubble('mein Bauch... 🤢');showToast('🤢 Junkfood-Schaden! Leben –20');setExpr('sick');animNoob('shakeAnim 0.5s steps(4)');spawnParticles(5,['🤢','💩','❌']);}
+  else{gainXP(6);showBubble('so gut tho!! 🍕');setExpr('happy');animNoob('bounce 0.5s steps(4)');spawnParticles(5,['🍕','😋','✨']);}
+  updateBars();updateMood();startCD('btn-junk','cd-junk',6);
+}
+function doCoffee(){if(isDead)return;sleepMode=false;caffeine+=3;energy=clamp(energy+30);fun=clamp(fun+5);health=clamp(health-5);gainXP(5);showBubble('AWAKE!!! ⚡⚡⚡');setExpr('excited');animNoob('dance 0.6s steps(6)');spawnParticles(7,['☕','⚡','💥','😤']);showToast('⚡ Caffeine +3 – Schlaf gesperrt!');updateBars();updateMood();startCD('btn-coffee','cd-coffee',7);setTimeout(()=>{caffeine=Math.max(0,caffeine-3);},15000);}
+function doMedic(){if(isDead)return;sleepMode=false;health=clamp(health+35);energy=clamp(energy-15);isSick=false;gainXP(10);showBubble('Der Arzt war ok...');setExpr('neutral');animNoob('shakeAnim 0.4s steps(4)');spawnParticles(5,['💊','❤️','✨']);updateBars();updateMood();startCD('btn-medic','cd-medic',12);}
+
+// ─── Arena click ──────────────────────────────────────────────────────────────
+function arenaClick(e){
+  if(isDead||e.target.closest('button'))return;
+  if(Math.random()<0.45)showBubble(pick(AUTO_PHRASES));
+  const p=document.createElement('div');p.className='particle';p.textContent=pick(['✨','💫','💚','🟩','⭐']);
+  p.style.fontSize='1rem';p.style.left=(e.offsetX-8)+'px';p.style.top=(e.offsetY-8)+'px';
+  arena.appendChild(p);setTimeout(()=>p.remove(),1500);
+}
+
+// ─── Decay ────────────────────────────────────────────────────────────────────
+setInterval(()=>{
+  if(isDead)return;
+  dayTick++;if(dayTick%40===0){day++;document.getElementById('age-num').textContent=day;}
+  if(!sleepMode){hunger=clamp(hunger-1.3);energy=clamp(energy-0.8);fun=clamp(fun-1.0);hygiene=clamp(hygiene-0.55);}
+  if(hygiene<20&&Math.random()<0.05){health=clamp(health-2.5);if(!isSick){isSick=true;showToast('🦠 Krank! Hygiene zu niedrig.');}}
+  if(hunger<10)health=clamp(health-1.5);
+  if(health<=0||(hunger<=0&&energy<=0)){
+    isDead=true;noobSvg.style.filter='grayscale(1) brightness(0.2)';
+    noobSvg.style.animation='none';setExpr('sad');deadScr.classList.add('show');return;
+  }
+  updateBars();updateMood();
+},1500);
+
+// ─── Revive ───────────────────────────────────────────────────────────────────
+document.getElementById('revive-btn').onclick=()=>{
+  isDead=false;isSick=false;sleepMode=false;caffeine=0;
+  hunger=65;energy=65;fun=65;health=65;hygiene=65;
+  xp=0;level=1;day=1;dayTick=0;
+  document.getElementById('lvl-num').textContent=1;
+  document.getElementById('lvl-title').textContent=LEVELS[0];
+  document.getElementById('age-num').textContent=1;
+  noobSvg.style.filter='';noobSvg.style.animation='idle 2.4s steps(8) infinite';
+  deadScr.classList.remove('show');setExpr('neutral');
+  showToast('💚 NOOB IST ZURÜCK!');showBubble('Ich lebe wieder!! 🟩');
+  updateBars();updateMood();updateXP();
+  // welcome back chat
+  setTimeout(()=>addMsg('ich bin wieder da!! habt ihr mich vermisst?',true,'excited'),600);
+};
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+initChatPhrases();
+updateBars();updateMood();updateXP();
+setTimeout(()=>{
+  showBubble('hey! care 4 me pls 🟩');
+  addMsg('HALLO!! Ich bin Noob! Kümmere dich bitte um mich 🟩',true,'excited');
+},900);
+</script>
+</body>
+</html>
