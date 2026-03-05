@@ -90,7 +90,12 @@ body::after{
 .badge.blue{color:#5af;border-color:#5af;}
 
 /* ── Main layout: arena left, stats right on wide ── */
-.top-row{display:flex;gap:10px;}
+.top-row{
+  display:flex;gap:10px;
+  position:sticky;top:0;z-index:100;
+  /* small shadow to separate from scrolling content below */
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+}
 .top-row .left{flex:1;min-width:0;}
 .top-row .right{width:150px;flex-shrink:0;}
 
@@ -140,11 +145,12 @@ body::after{
   filter:blur(3px);
 }
 
-/* ── Speech bubble – Roblox pixel style ── */
+/* ── Speech bubble – fixed top of arena ── */
 #bubble{
   position:absolute;
-  bottom:calc(100% + 6px);
-  left:50%;transform:translateX(-50%);
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
   background:#fff;color:#111;
   border:3px solid #000;
   box-shadow:3px 3px 0 #000;
@@ -153,25 +159,10 @@ body::after{
   font-size:0.38rem;
   line-height:1.6;
   white-space:normal;text-align:center;
-  max-width:160px;min-width:60px;
-  opacity:0;pointer-events:none;
-  transition:opacity 0.15s;
+  max-width:200px;min-width:60px;
+  opacity:1;pointer-events:none;
   z-index:30;
 }
-#bubble::after{
-  content:'';position:absolute;
-  top:100%;left:50%;transform:translateX(-50%);
-  border:6px solid transparent;
-  border-top-color:#000;border-bottom:none;
-}
-#bubble::before{
-  content:'';position:absolute;
-  top:calc(100% - 1px);left:50%;transform:translateX(-50%);
-  border:5px solid transparent;
-  border-top-color:#fff;border-bottom:none;
-  z-index:1;
-}
-#bubble.show{opacity:1;}
 
 #mood-ring{
   position:absolute;top:8px;right:8px;
@@ -435,6 +426,56 @@ body::after{
 @keyframes angryShake{
   0%,100%{transform:rotate(0);}25%{transform:rotate(-4deg);}75%{transform:rotate(4deg);}
 }
+@keyframes hit{
+  0%{transform:translateX(0) scaleX(1);}
+  15%{transform:translateX(-16px) scaleX(0.88);}
+  30%{transform:translateX(20px) scaleX(1.1);}
+  55%{transform:translateX(-8px);}
+  75%{transform:translateX(6px);}
+  100%{transform:translateX(0) scaleX(1);}
+}
+@keyframes punchFlash{
+  0%,100%{opacity:0;}50%{opacity:1;}
+}
+@keyframes fistFly{
+  0%{transform:translate(-70px,-10px) scale(0.4) rotate(-30deg);opacity:0;}
+  35%{transform:translate(0,0) scale(1.6) rotate(0deg);opacity:1;}
+  60%{transform:translate(8px,6px) scale(1.1);opacity:1;}
+  100%{transform:translate(50px,30px) scale(0.2) rotate(20deg);opacity:0;}
+}
+.btn-punch{
+  border-color:#aa0000 !important;
+  background:linear-gradient(180deg,#1a0000,#0d0000) !important;
+}
+.btn-punch:hover:not(.cooling){
+  background:linear-gradient(180deg,#2a0000,#1a0000) !important;
+  border-color:#ff3333 !important;
+  box-shadow:4px 4px 0 #000, 0 0 14px rgba(255,30,30,0.5) !important;
+}
+.btn-punch .e{ filter:drop-shadow(0 0 5px rgba(255,50,50,0.8)); }
+#combo-display{
+  position:absolute;top:10px;left:10px;
+  font-family:'Press Start 2P',monospace;font-size:0.6rem;
+  color:#ff4444;text-shadow:2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.6);
+  z-index:20;opacity:0;transition:opacity 0.3s;pointer-events:none;
+}
+#combo-display.show{opacity:1;}
+#hit-flash{
+  position:absolute;inset:0;
+  background:rgba(255,20,20,0.22);
+  pointer-events:none;z-index:15;opacity:0;
+}
+#hit-flash.flash{animation:punchFlash 0.16s steps(2) forwards;}
+#punch-bar{
+  position:absolute;bottom:2px;left:0;right:0;height:5px;
+  background:#111;border-top:2px solid #333;overflow:hidden;
+  opacity:0;transition:opacity 0.3s;z-index:20;
+}
+#punch-bar.show{opacity:1;}
+#punch-bar-fill{
+  height:100%;background:#ff4444;
+  width:100%;transition:width 0.05s linear;
+}
 .noob-svg{
   width:84px;display:block;margin:0 auto;
   animation:idle 2.4s steps(8) infinite;
@@ -467,10 +508,12 @@ body::after{
     <div id="arena" onclick="arenaClick(event)">
       <div class="ground"></div>
       <div id="mood-ring">😄</div>
+      <div id="hit-flash"></div>
+      <div id="combo-display"></div>
+      <div id="punch-bar"><div id="punch-bar-fill"></div></div>
+      <div id="bubble">hey! care 4 me pls 🟩</div>
 
       <div id="noob-wrap">
-        <div id="bubble"></div>
-
         <!-- ═══ ROBLOX NOOB SVG ═══ -->
         <svg id="noob-svg" class="noob-svg" viewBox="0 0 84 118" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
           <!-- Shadow -->
@@ -581,7 +624,7 @@ body::after{
 
   <!-- Stats sidebar -->
   <div class="right">
-    <div class="stats-panel" style="height:100%;">
+    <div class="stats-panel" style="height:100%;overflow-y:auto;">
       <div class="stat-row"><span class="stat-icon">🍔</span><span class="stat-lbl">Hunger</span><div class="bar-track"><div class="bar-fill" id="b-hunger" style="width:80%;background:#f5c518"></div></div><span class="stat-val" id="v-hunger">80</span></div>
       <div class="stat-row"><span class="stat-icon">⚡</span><span class="stat-lbl">Energie</span><div class="bar-track"><div class="bar-fill" id="b-energy" style="width:80%;background:#38bdf8"></div></div><span class="stat-val" id="v-energy">80</span></div>
       <div class="stat-row"><span class="stat-icon">🎉</span><span class="stat-lbl">Spaß</span><div class="bar-track"><div class="bar-fill" id="b-fun" style="width:80%;background:#f472b6"></div></div><span class="stat-val" id="v-fun">80</span></div>
@@ -653,6 +696,20 @@ body::after{
     <span class="e">⚡</span><span class="lbl">ENERGY DRINK</span>
     <span class="good">+Energie</span><span class="risk">Schlaf gesperrt!</span>
     <div class="cd-overlay" id="cd-coffee"></div>
+  </button>
+</div>
+
+<div class="sec-lbl" style="color:#ff4444;">▶ GEWALT</div>
+<div class="btn-grid g2">
+  <button class="btn btn-punch" id="btn-punch" onclick="doPunch()">
+    <span class="e">👊</span><span class="lbl">SCHLAGEN</span>
+    <span class="risk">-Leben -Spaß</span>
+    <div class="cd-overlay" id="cd-punch"></div>
+  </button>
+  <button class="btn btn-punch" id="btn-kick" onclick="doKick()">
+    <span class="e">🦵</span><span class="lbl">TRETEN</span>
+    <span class="risk">-Leben -Energie</span>
+    <div class="cd-overlay" id="cd-kick"></div>
   </button>
 </div>
 
@@ -892,11 +949,30 @@ function gainXP(n){
 
 // ─── Bubble ──────────────────────────────────────────────────────────────────
 let bT;
-function showBubble(txt,dur=2600){
+function showBubble(txt){
   clearTimeout(bT);
   bubbleEl.textContent=txt;
-  bubbleEl.classList.add('show');
-  bT=setTimeout(()=>bubbleEl.classList.remove('show'),dur);
+  repositionBubble();
+}
+
+function repositionBubble(){
+  const nRect = noobWrap.getBoundingClientRect();
+  const bw = 160;
+  const bh = 44;
+  const margin = 8;
+  let left = nRect.left + nRect.width/2 - bw/2;
+  left = Math.max(4, Math.min(window.innerWidth - bw - 4, left));
+  const spaceAbove = nRect.top - bh - margin;
+  if(spaceAbove > 10){
+    bubbleEl.style.top = (nRect.top - bh - margin) + 'px';
+    bubbleEl.classList.remove('below');
+    bubbleEl.classList.add('above');
+  } else {
+    bubbleEl.style.top = (nRect.bottom + margin) + 'px';
+    bubbleEl.classList.remove('above');
+    bubbleEl.classList.add('below');
+  }
+  bubbleEl.style.left = left + 'px';
 }
 let tT;
 function showToast(msg){
@@ -1016,6 +1092,8 @@ function moveNoob(){
 }
 setInterval(moveNoob,5000);
 
+// also reposition on scroll/resize
+
 // Auto speech
 const AUTO_PHRASES=[
   'oof...','Noob life 🟩','Ich hab Hunger...','Spielen? Bitte?',
@@ -1057,6 +1135,94 @@ function doCoffee(){if(isDead)return;sleepMode=false;caffeine+=3;energy=clamp(en
 function doMedic(){if(isDead)return;sleepMode=false;health=clamp(health+35);energy=clamp(energy-15);isSick=false;gainXP(10);showBubble('Der Arzt war ok...');setExpr('neutral');animNoob('shakeAnim 0.4s steps(4)');spawnParticles(5,['💊','❤️','✨']);updateBars();updateMood();startCD('btn-medic','cd-medic',12);}
 
 // ─── Arena click ──────────────────────────────────────────────────────────────
+// ─── PUNCH system ────────────────────────────────────────────────
+let combo = 0, comboTimer;
+const hitFlash = document.getElementById('hit-flash');
+const comboDis = document.getElementById('combo-display');
+const punchBar = document.getElementById('punch-bar');
+const punchBarFill = document.getElementById('punch-bar-fill');
+
+const PUNCH_PHRASES = [
+  'OW!! 😢','AU!!','Warum?!','SCHMERZ!!','Das tut weh!!',
+  'OUCH!!','Ich bin am Weinen!!','Aufhören!!','Hör auf!!','Bitte nicht!!',
+  'ICH HAB NICHTS GETAN!!','😭😭😭','Ich hasse dich!!','MONSTER!!','oof oof oof'
+];
+const KICK_PHRASES = [
+  'AAAH!! 🦵','Mein Bauch!!','NEIN!!','Warum TRITTST du mich?!',
+  'Das war mein bestes Organ!!','ICH KLAGE DICH AN!!','Ich flieg durch die Luft!!',
+  'Zu weit!! ZU WEIT!!','YEET!!','Ich dreh mich... 😵'
+];
+const HIGH_COMBO = ['COMBO x','BRUTAL!!','NICHT AUFHÖREN!!','SAVAGE!!'];
+
+function triggerHitEffect(phrasePool){
+  // Flash
+  hitFlash.classList.remove('flash');
+  void hitFlash.offsetWidth;
+  hitFlash.classList.add('flash');
+
+  // Combo
+  clearTimeout(comboTimer);
+  combo++;
+  let label = combo >= 5 ? pick(HIGH_COMBO) + combo : 'COMBO x' + combo;
+  comboDis.textContent = label;
+  comboDis.classList.add('show');
+  comboDis.style.fontSize = Math.min(0.6 + combo * 0.06, 1.1) + 'rem';
+  comboTimer = setTimeout(() => { combo = 0; comboDis.classList.remove('show'); }, 1800);
+
+  // Fist particle
+  const rect = arena.getBoundingClientRect();
+  const nr = noobWrap.getBoundingClientRect();
+  const fx = nr.left - rect.left + Math.random() * 50 + 10;
+  const fy = nr.top - rect.top + 20;
+  const fist = document.createElement('div');
+  fist.style.cssText = 'position:absolute;font-size:1.6rem;pointer-events:none;z-index:25;left:'+fx+'px;top:'+fy+'px;animation:fistFly 0.45s steps(6) forwards;';
+  fist.textContent = phrasePool === KICK_PHRASES ? '🦵' : '👊';
+  arena.appendChild(fist);
+  setTimeout(() => fist.remove(), 500);
+
+  // Stars
+  spawnParticles(3 + Math.min(combo, 5), ['💥','⭐','😵','✨']);
+
+  // Speech
+  showBubble(pick(phrasePool));
+
+  // Screen shake via arena
+  arena.style.transform = 'translate(' + (Math.random()*6-3) + 'px,' + (Math.random()*4-2) + 'px)';
+  setTimeout(() => arena.style.transform = '', 80);
+}
+
+function doPunch(){
+  if(isDead) return;
+  sleepMode = false;
+  health  = clamp(health - 8);
+  fun     = clamp(fun - 6);
+  hygiene = clamp(hygiene - 2);
+  triggerHitEffect(PUNCH_PHRASES);
+  setExpr('sad');
+  animNoob('hit 0.4s steps(6)');
+  updateBars(); updateMood();
+  startCD('btn-punch','cd-punch', 1);
+}
+
+function doKick(){
+  if(isDead) return;
+  sleepMode = false;
+  health  = clamp(health - 14);
+  energy  = clamp(energy - 10);
+  fun     = clamp(fun - 10);
+  triggerHitEffect(KICK_PHRASES);
+  setExpr('angry');
+  // Noob flies sideways
+  const curLeft = parseInt(noobWrap.style.left) || 160;
+  const kickDir = curLeft < 200 ? 80 : -80;
+  noobWrap.style.left = clamp2(curLeft + kickDir, 10, 260) + 'px';
+  animNoob('hit 0.5s steps(6)');
+  updateBars(); updateMood();
+  startCD('btn-kick','cd-kick', 2);
+}
+
+function clamp2(v, mn, mx){ return Math.max(mn, Math.min(mx, v)); }
+
 function arenaClick(e){
   if(isDead||e.target.closest('button'))return;
   if(Math.random()<0.45)showBubble(pick(AUTO_PHRASES));
@@ -1099,7 +1265,6 @@ document.getElementById('revive-btn').onclick=()=>{
 initChatPhrases();
 updateBars();updateMood();updateXP();
 setTimeout(()=>{
-  showBubble('hey! care 4 me pls 🟩');
   addMsg('HALLO!! Ich bin Noob! Kümmere dich bitte um mich 🟩',true,'excited');
 },900);
 </script>
