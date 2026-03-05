@@ -408,6 +408,17 @@ body::after{
 .phrase-btn:last-child{border-bottom:none;}
 .phrase-btn:hover{background:#2a2a2a;}
 .phrase-btn:active{background:var(--g);color:#fff;}
+.leave-btn{
+  background:#1a0000 !important;
+  color:#ff4444 !important;
+  border-bottom:3px solid #440000 !important;
+  font-size:0.55rem !important;
+  text-align:center !important;
+  letter-spacing:1px;
+  position:sticky;top:0;z-index:5;
+}
+.leave-btn:hover{background:#2a0000 !important;}
+.leave-btn:active{background:#ff4444 !important;color:#fff !important;}
 
 /* toast */
 #toast{
@@ -757,6 +768,20 @@ body::after{
     <span class="risk">-Spaß -Energie</span><span class="risk">Noob weint!</span>
     <div class="cd-overlay" id="cd-yell"></div>
   </button>
+  <button class="btn btn-punch" id="btn-torture" onclick="doTorture()" style="grid-column:span 2;border-color:#660000;background:#100000;">
+    <span class="e">🔥</span><span class="lbl">MEGA-SCHMERZ</span>
+    <span class="risk">-Leben -60 !! Alles sinkt!!</span><span class="risk">⚠️ Fast tödlich!</span>
+    <div class="cd-overlay" id="cd-torture"></div>
+  </button>
+</div>
+
+<div class="sec-lbl" style="color:#4ade80;">▶ BESONDERES</div>
+<div class="btn-grid g2">
+  <button class="btn btn-gym" id="btn-superhug" onclick="doSuperHug()" style="grid-column:span 2;border-color:#1a8c3c;background:#001408;">
+    <span class="e">🤗</span><span class="lbl">SUPER-UMARMUNG</span>
+    <span class="good">Alles +30 !! Noob flippt aus!!</span><span class="good">⭐ +25 XP</span>
+    <div class="cd-overlay" id="cd-superhug"></div>
+  </button>
 </div>
 
 <!-- ═══ CHAT ═══ -->
@@ -769,6 +794,7 @@ body::after{
     <!-- messages appear here -->
   </div>
   <div class="chat-bottom">
+    <button class="phrase-btn leave-btn" onclick="doLeave()">🚪 WEGGEHEN</button>
     <div class="phrase-scroll" id="phrase-scroll">
       <!-- phrase buttons injected by JS -->
     </div>
@@ -947,7 +973,7 @@ function sendPhrase(phrase){
     const mood=matched?matched.mood:'neutral';
     if(matched && matched.stat) matched.stat();
     addMsg(response,true,mood);
-    showBubble(response.length>40?response.substring(0,37)+'...':response,2800);
+    showBubble(response);
     updateBars();updateMood();
   },400+Math.random()*400);
 }
@@ -1180,6 +1206,118 @@ function doJunk(){
 }
 function doCoffee(){if(isDead)return;sleepMode=false;caffeine+=3;energy=clamp(energy+30);fun=clamp(fun+5);health=clamp(health-5);gainXP(5);showBubble('AWAKE!!! ⚡⚡⚡');setExpr('excited');animNoob('dance 0.6s steps(6)');spawnParticles(7,['☕','⚡','💥','😤']);showToast('⚡ Caffeine +3 – Schlaf gesperrt!');updateBars();updateMood();startCD('btn-coffee','cd-coffee',7);setTimeout(()=>{caffeine=Math.max(0,caffeine-3);},15000);}
 function doMedic(){if(isDead)return;sleepMode=false;health=clamp(health+35);energy=clamp(energy-15);isSick=false;gainXP(10);showBubble('Der Arzt war ok...');setExpr('neutral');animNoob('shakeAnim 0.4s steps(4)');spawnParticles(5,['💊','❤️','✨']);updateBars();updateMood();startCD('btn-medic','cd-medic',12);}
+
+function doSuperHug(){
+  if(isDead) return; sleepMode=false;
+  hunger  = clamp(hunger  + 30);
+  energy  = clamp(energy  + 30);
+  fun     = clamp(fun     + 30);
+  health  = clamp(health  + 30);
+  hygiene = clamp(hygiene + 20);
+  isSick  = false;
+  gainXP(25);
+  const phrases=[
+    'DAS WAR DAS BESTE!! 😭💚','ICH BIN SO GLÜCKLICH!! 🟩🟩🟩',
+    'Mehr!! MEHR!! NOCHMAL!!','Ich weine vor Freude!! 😭⭐',
+    'Bester Tag meines Lebens!!','Du bist mein HELD!! 💚💚',
+    'Ich liebe dich so sehr!! 🤗🤗🤗','JAAAAAA!! 🎉🎉🎉',
+  ];
+  const r = pick(phrases);
+  showBubble(r); setExpr('excited');
+  // Big bounce + dance combo
+  noobSvg.style.animation='lvlUp 0.5s steps(6)';
+  setTimeout(()=>noobSvg.style.animation='dance 1s steps(8)', 500);
+  setTimeout(()=>noobSvg.style.animation='idle 2.4s steps(8) infinite', 1500);
+  spawnParticles(20, ['💚','🟩','⭐','💖','✨','🎉','🤗','💫']);
+  // Hearts rain from top
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      const h=document.createElement('div');
+      h.className='particle';
+      h.textContent=pick(['💚','💖','💛','💜','🤍']);
+      h.style.fontSize='1.4rem';
+      h.style.left=(Math.random()*400)+'px';
+      h.style.top='10px';
+      h.style.animationDuration='2s';
+      arena.appendChild(h);
+      setTimeout(()=>h.remove(),2000);
+    }, i*120);
+  }
+  // Green flash
+  arena.style.boxShadow='0 0 0 4px #4ade80, inset 0 0 60px rgba(74,222,128,0.3)';
+  setTimeout(()=>arena.style.boxShadow='',1200);
+  showToast('🤗 SUPER-UMARMUNG! Alles +30 !! Noob dreht durch!!');
+  addMsg(r, true, 'excited');
+  updateBars(); updateMood();
+  startCD('btn-superhug','cd-superhug', 20);
+}
+
+function doTorture(){
+  if(isDead) return; sleepMode=false;
+  health  = clamp(health  - 60);
+  fun     = clamp(fun     - 40);
+  energy  = clamp(energy  - 35);
+  hygiene = clamp(hygiene - 20);
+  isSick  = true;
+  const phrases=[
+    'AAAAAAHHH!! 😱😱😱','ICH STERBE!! ICH STERBE WIRKLICH!!',
+    'WAS IST DAS?!?! WARUM?!?!','NOOB KAPUTT!! NOOB KAPUTT!!',
+    'HILFE!! JEMAND!! HILFE!!','Das... war... zu viel... 💀',
+    'ICH HASSE DICH!!! 😭🔥','Bitte... hör auf... bitte...',
+  ];
+  const r = pick(phrases);
+  showBubble(r); setExpr('angry');
+  // Rapid screen shake
+  let shakes = 0;
+  const shakeInt = setInterval(()=>{
+    const x=(Math.random()*14-7).toFixed(1);
+    const y=(Math.random()*8-4).toFixed(1);
+    arena.style.transform=`translate(${x}px,${y}px)`;
+    if(++shakes>14){ clearInterval(shakeInt); arena.style.transform=''; }
+  }, 50);
+  // Red flash repeated
+  hitFlash.classList.remove('flash'); void hitFlash.offsetWidth; hitFlash.classList.add('flash');
+  setTimeout(()=>{ hitFlash.classList.remove('flash'); void hitFlash.offsetWidth; hitFlash.classList.add('flash'); },200);
+  setTimeout(()=>{ hitFlash.classList.remove('flash'); void hitFlash.offsetWidth; hitFlash.classList.add('flash'); },400);
+  animNoob('hit 0.8s steps(8)');
+  spawnParticles(18, ['💥','😱','🔥','❌','💀','😵','⚡']);
+  // Red arena glow
+  arena.style.boxShadow='0 0 0 4px #ff2222, inset 0 0 60px rgba(255,30,30,0.35)';
+  setTimeout(()=>arena.style.boxShadow='', 1500);
+  showToast('🔥 MEGA-SCHMERZ!! Leben –60 !! Fast tot!!');
+  addMsg(r, true, 'angry');
+  updateBars(); updateMood();
+  startCD('btn-torture','cd-torture', 15);
+}
+
+function doLeave(){
+  if(isDead) return;
+  const responses=[
+    'WARTE!! Komm zurück!! 😭',
+    'Bitte geh nicht... 😢',
+    'Ich bin allein... 😢',
+    'Du lässt mich einfach allein?!',
+    'Okay... tschüss... *schluchz*',
+    'Ich warte hier... falls du zurückkommst...',
+    'NEIN!! NEIN NEIN NEIN!!',
+    'Du bist das Schlimmste!! 😭💔',
+  ];
+  const r = pick(responses);
+  addMsg('🚪 *geht weg*', false);
+  setTimeout(()=>{
+    fun = clamp(fun - 18);
+    energy = clamp(energy - 8);
+    addMsg(r, true, 'sad');
+    showBubble(r);
+    updateBars(); updateMood();
+    // Noob läuft in eine Ecke
+    noobWrap.style.left = '10px';
+    noobWrap.style.bottom = '65px';
+    setTimeout(repositionBubble, 1900);
+    animNoob('sleeping 2s steps(6) infinite');
+    setTimeout(()=>{ if(!sleepMode) animNoob('idle 2.4s steps(8) infinite'); }, 4000);
+  }, 500);
+}
 
 function doSmoke(){
   if(isDead)return; sleepMode=false;
