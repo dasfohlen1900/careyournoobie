@@ -21,17 +21,16 @@
   --pixel: 2px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
+html,body{height:100%;overflow:hidden;}
 body{
   background:var(--bg);
   font-family:'Nunito',sans-serif;
   color:var(--text);
-  min-height:100vh;
+  height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:12px 8px 32px;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 
 /* ── Pixel scanlines ── */
@@ -53,8 +52,28 @@ body::after{
 .wrapper{
   position:relative;z-index:1;
   width:100%;max-width:480px;
-  display:flex;flex-direction:column;gap:10px;
+  height:100vh;
+  display:flex;flex-direction:column;
+  gap:0;
+  overflow:hidden;
 }
+.top-fixed{
+  flex-shrink:0;
+  display:flex;flex-direction:column;gap:8px;
+  padding:8px 8px 0;
+  background:var(--bg);
+  z-index:10;
+}
+.bottom-scroll{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:8px 8px 24px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.bottom-scroll::-webkit-scrollbar{width:6px;}
+.bottom-scroll::-webkit-scrollbar-track{background:#111;}
+.bottom-scroll::-webkit-scrollbar-thumb{background:#333;border:1px solid #000;}
 
 /* ── Header ── */
 .header{
@@ -68,7 +87,7 @@ body::after{
 }
 .header h1{
   font-family:'Press Start 2P',monospace;
-  font-size:1rem;
+  font-size:1.4rem;
   color:var(--y);
   text-shadow:3px 3px 0 #7a5e00, 0 0 20px rgba(245,197,24,0.4);
   letter-spacing:2px;
@@ -79,8 +98,8 @@ body::after{
 }
 .badge{
   font-family:'Press Start 2P',monospace;
-  font-size:0.45rem;
-  padding:4px 8px;
+  font-size:0.65rem;
+  padding:5px 10px;
   border:2px solid var(--border);
   background:#111;
   color:var(--y);
@@ -91,13 +110,10 @@ body::after{
 
 /* ── Main layout: arena left, stats right on wide ── */
 .top-row{
-  display:flex;gap:10px;
-  position:sticky;top:0;z-index:100;
-  /* small shadow to separate from scrolling content below */
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+  display:flex;flex-direction:column;gap:10px;
 }
-.top-row .left{flex:1;min-width:0;}
-.top-row .right{width:150px;flex-shrink:0;}
+.top-row .left{width:100%;}
+.top-row .right{width:100%;}
 
 /* ── Arena ── */
 #arena{
@@ -156,17 +172,17 @@ body::after{
   box-shadow:3px 3px 0 #000;
   padding:5px 10px;
   font-family:'Press Start 2P',monospace;
-  font-size:0.38rem;
-  line-height:1.6;
+  font-size:0.6rem;
+  line-height:1.7;
   white-space:normal;text-align:center;
-  max-width:200px;min-width:60px;
+  max-width:220px;min-width:80px;
   opacity:1;pointer-events:none;
   z-index:30;
 }
 
 #mood-ring{
   position:absolute;top:8px;right:8px;
-  font-size:1.3rem;z-index:20;
+  font-size:1.8rem;z-index:20;
   image-rendering:pixelated;
 }
 
@@ -189,15 +205,15 @@ body::after{
 }
 #dead-screen.show{display:flex;}
 #dead-screen h2{
-  font-family:'Press Start 2P',monospace;font-size:0.75rem;
+  font-family:'Press Start 2P',monospace;font-size:1.1rem;
   color:var(--r);text-shadow:2px 2px 0 #600;
 }
 #dead-screen p{
-  font-family:'Press Start 2P',monospace;font-size:0.38rem;
-  color:var(--muted);text-align:center;padding:0 20px;line-height:1.8;
+  font-family:'Press Start 2P',monospace;font-size:0.55rem;
+  color:var(--muted);text-align:center;padding:0 20px;line-height:2;
 }
 #revive-btn{
-  font-family:'Press Start 2P',monospace;font-size:0.5rem;
+  font-family:'Press Start 2P',monospace;font-size:0.7rem;
   background:var(--g);color:#fff;border:3px solid #000;
   box-shadow:3px 3px 0 #000;
   padding:10px 18px;cursor:pointer;
@@ -210,18 +226,18 @@ body::after{
   background:var(--panel);
   border:3px solid var(--border);
   box-shadow:4px 4px 0 #000;
-  padding:10px;
-  display:flex;flex-direction:column;gap:7px;
+  padding:12px 14px;
+  display:flex;flex-direction:column;gap:10px;
 }
-.stat-row{display:flex;align-items:center;gap:6px;}
-.stat-icon{font-size:0.85rem;width:18px;text-align:center;flex-shrink:0;}
+.stat-row{display:flex;align-items:center;gap:8px;}
+.stat-icon{font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;}
 .stat-lbl{
   font-family:'Press Start 2P',monospace;
-  font-size:0.3rem;color:var(--muted);
-  width:46px;flex-shrink:0;
+  font-size:0.6rem;color:var(--muted);
+  width:72px;flex-shrink:0;
 }
 .bar-track{
-  flex:1;height:8px;
+  flex:1;height:14px;
   background:#111;
   border:2px solid #333;
   image-rendering:pixelated;
@@ -233,8 +249,8 @@ body::after{
   image-rendering:pixelated;
 }
 .stat-val{
-  font-family:'Press Start 2P',monospace;font-size:0.3rem;
-  width:24px;text-align:right;color:var(--muted);flex-shrink:0;
+  font-family:'Press Start 2P',monospace;font-size:0.55rem;
+  width:32px;text-align:right;color:var(--muted);flex-shrink:0;
 }
 
 /* XP bar */
@@ -243,15 +259,15 @@ body::after{
   box-shadow:4px 4px 0 #000;
   padding:8px 10px;display:flex;align-items:center;gap:8px;
 }
-.xp-lbl{font-family:'Press Start 2P',monospace;font-size:0.35rem;color:var(--y);white-space:nowrap;}
-.xp-track{flex:1;height:8px;background:#111;border:2px solid #333;overflow:hidden;}
+.xp-lbl{font-family:'Press Start 2P',monospace;font-size:0.6rem;color:var(--y);white-space:nowrap;}
+.xp-track{flex:1;height:11px;background:#111;border:2px solid #333;overflow:hidden;}
 .xp-fill{height:100%;background:repeating-linear-gradient(90deg,var(--y) 0px,var(--y) 4px,#b88a00 4px,#b88a00 8px);transition:width 0.4s steps(10);}
-.xp-val{font-family:'Press Start 2P',monospace;font-size:0.3rem;color:var(--muted);white-space:nowrap;}
+.xp-val{font-family:'Press Start 2P',monospace;font-size:0.55rem;color:var(--muted);white-space:nowrap;}
 
 /* ── Buttons ── */
 .sec-lbl{
-  font-family:'Press Start 2P',monospace;font-size:0.38rem;
-  color:var(--muted);margin:4px 0 4px 2px;
+  font-family:'Press Start 2P',monospace;font-size:0.6rem;
+  color:var(--muted);margin:6px 0 5px 2px;
   text-transform:uppercase;letter-spacing:1px;
 }
 .btn-grid{display:grid;gap:7px;}
@@ -263,10 +279,10 @@ body::after{
   background:var(--panel);
   border:3px solid #333;
   box-shadow:3px 3px 0 #000;
-  padding:9px 6px;cursor:pointer;
+  padding:12px 8px;cursor:pointer;
   color:var(--text);
   font-family:'Nunito',sans-serif;
-  font-weight:800;font-size:0.78rem;
+  font-weight:800;font-size:0.9rem;
   display:flex;flex-direction:column;align-items:center;gap:2px;
   transition:transform 0.08s,box-shadow 0.08s;
   overflow:hidden;user-select:none;
@@ -280,10 +296,10 @@ body::after{
   transform:translate(2px,2px);
   box-shadow:1px 1px 0 #000;
 }
-.btn .e{font-size:1.3rem;line-height:1;}
-.btn .lbl{font-family:'Press Start 2P',monospace;font-size:0.32rem;text-align:center;line-height:1.5;color:#ccc;}
-.btn .risk{font-size:0.55rem;color:#f87171;font-weight:700;}
-.btn .good{font-size:0.55rem;color:#4ade80;font-weight:700;}
+.btn .e{font-size:1.7rem;line-height:1;}
+.btn .lbl{font-family:'Press Start 2P',monospace;font-size:0.52rem;text-align:center;line-height:1.5;color:#ccc;}
+.btn .risk{font-size:0.62rem;color:#f87171;font-weight:700;}
+.btn .good{font-size:0.62rem;color:#4ade80;font-weight:700;}
 
 .btn-feed  {border-color:#7a5e00;} .btn-feed:hover  {background:#1c1800;}
 .btn-wash  {border-color:#004a7a;} .btn-wash:hover  {background:#00111c;}
@@ -299,7 +315,7 @@ body::after{
   position:absolute;inset:0;
   background:rgba(0,0,0,0.75);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#fff;
+  font-family:'Press Start 2P',monospace;font-size:0.75rem;color:#fff;
   opacity:0;transition:opacity 0.15s;pointer-events:none;
 }
 .btn.cooling{pointer-events:none;}
@@ -312,21 +328,23 @@ body::after{
   box-shadow:4px 4px 0 #000;
   display:flex;flex-direction:column;
   overflow:hidden;
+  min-height:420px;
 }
 .chat-header{
   background:var(--g);
   padding:6px 10px;
-  font-family:'Press Start 2P',monospace;font-size:0.45rem;
+  font-family:'Press Start 2P',monospace;font-size:0.65rem;
   color:#fff;text-shadow:1px 1px 0 #000;
   display:flex;align-items:center;gap:6px;
   flex-shrink:0;
 }
 .chat-log{
-  height:160px;overflow-y:auto;
+  flex:1;
+  min-height:200px;
+  overflow-y:auto;
   padding:8px 10px;
   display:flex;flex-direction:column;gap:6px;
   background:var(--chat-bg);
-  flex-shrink:0;
 }
 .chat-log::-webkit-scrollbar{width:6px;}
 .chat-log::-webkit-scrollbar-track{background:#111;}
@@ -342,8 +360,8 @@ body::after{
 .msg-bubble{
   max-width:72%;
   padding:5px 9px;
-  font-family:'Press Start 2P',monospace;font-size:0.32rem;
-  line-height:1.8;border:2px solid #000;
+  font-family:'Press Start 2P',monospace;font-size:0.55rem;
+  line-height:2;border:2px solid #000;
   box-shadow:2px 2px 0 #000;
 }
 .msg.noob .msg-bubble{
@@ -359,25 +377,35 @@ body::after{
   border:2px solid #000;box-shadow:2px 2px 0 #000;
 }
 
-/* Chat input row */
+/* Chat input grid */
 .chat-bottom{
-  display:flex;gap:0;border-top:3px solid var(--border);flex-shrink:0;
-}
-.phrase-scroll{
-  flex:1;overflow-x:auto;overflow-y:hidden;
-  display:flex;gap:0;
-  scrollbar-width:none;
-}
-.phrase-scroll::-webkit-scrollbar{display:none;}
-.phrase-btn{
+  border-top:3px solid var(--border);
   flex-shrink:0;
-  background:var(--panel2);
-  border:none;border-right:2px solid var(--border);
-  padding:7px 10px;cursor:pointer;color:var(--text);
-  font-family:'Press Start 2P',monospace;font-size:0.3rem;
-  white-space:nowrap;transition:background 0.1s;
-  line-height:1.5;
+  max-height:220px;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
+.chat-bottom::-webkit-scrollbar{width:6px;}
+.chat-bottom::-webkit-scrollbar-track{background:#111;}
+.chat-bottom::-webkit-scrollbar-thumb{background:#333;border:1px solid #000;}
+.phrase-scroll{
+  display:flex;
+  flex-direction:column;
+}
+.phrase-btn{
+  background:var(--panel2);
+  border:none;
+  border-bottom:2px solid var(--border);
+  padding:11px 12px;
+  cursor:pointer;color:var(--text);
+  font-family:'Press Start 2P',monospace;font-size:0.5rem;
+  white-space:normal;
+  text-align:left;
+  line-height:1.7;
+  transition:background 0.1s;
+  width:100%;
+}
+.phrase-btn:last-child{border-bottom:none;}
 .phrase-btn:hover{background:#2a2a2a;}
 .phrase-btn:active{background:var(--g);color:#fff;}
 
@@ -388,7 +416,7 @@ body::after{
   background:var(--panel2);
   border:3px solid var(--border);box-shadow:3px 3px 0 #000;
   padding:8px 16px;
-  font-family:'Press Start 2P',monospace;font-size:0.38rem;
+  font-family:'Press Start 2P',monospace;font-size:0.6rem;
   opacity:0;transition:all 0.2s;pointer-events:none;z-index:200;
   white-space:nowrap;max-width:90vw;text-align:center;
 }
@@ -455,7 +483,7 @@ body::after{
 .btn-punch .e{ filter:drop-shadow(0 0 5px rgba(255,50,50,0.8)); }
 #combo-display{
   position:absolute;top:10px;left:10px;
-  font-family:'Press Start 2P',monospace;font-size:0.6rem;
+  font-family:'Press Start 2P',monospace;font-size:0.85rem;
   color:#ff4444;text-shadow:2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.6);
   z-index:20;opacity:0;transition:opacity 0.3s;pointer-events:none;
 }
@@ -491,6 +519,7 @@ body::after{
 </head>
 <body>
 <div class="wrapper">
+<div class="top-fixed">
 
 <!-- Header -->
 <div class="header">
@@ -502,10 +531,8 @@ body::after{
   </div>
 </div>
 
-<!-- Arena + Stats side by side -->
-<div class="top-row">
-  <div class="left">
-    <div id="arena" onclick="arenaClick(event)">
+<!-- Arena -->
+<div id="arena" onclick="arenaClick(event)">
       <div class="ground"></div>
       <div id="mood-ring">😄</div>
       <div id="hit-flash"></div>
@@ -619,20 +646,16 @@ body::after{
         <p>Noob ist gestorben.<br>Du warst ein schlechter Freund.</p>
         <button id="revive-btn">▶ NEU STARTEN</button>
       </div>
-    </div>
-  </div>
+</div><!-- /arena -->
 
-  <!-- Stats sidebar -->
-  <div class="right">
-    <div class="stats-panel" style="height:100%;overflow-y:auto;">
+<!-- Stats -->
+<div class="stats-panel">
       <div class="stat-row"><span class="stat-icon">🍔</span><span class="stat-lbl">Hunger</span><div class="bar-track"><div class="bar-fill" id="b-hunger" style="width:80%;background:#f5c518"></div></div><span class="stat-val" id="v-hunger">80</span></div>
       <div class="stat-row"><span class="stat-icon">⚡</span><span class="stat-lbl">Energie</span><div class="bar-track"><div class="bar-fill" id="b-energy" style="width:80%;background:#38bdf8"></div></div><span class="stat-val" id="v-energy">80</span></div>
       <div class="stat-row"><span class="stat-icon">🎉</span><span class="stat-lbl">Spaß</span><div class="bar-track"><div class="bar-fill" id="b-fun" style="width:80%;background:#f472b6"></div></div><span class="stat-val" id="v-fun">80</span></div>
       <div class="stat-row"><span class="stat-icon">❤️</span><span class="stat-lbl">Leben</span><div class="bar-track"><div class="bar-fill" id="b-health" style="width:90%;background:#f87171"></div></div><span class="stat-val" id="v-health">90</span></div>
       <div class="stat-row"><span class="stat-icon">🧹</span><span class="stat-lbl">Hygiene</span><div class="bar-track"><div class="bar-fill" id="b-hygiene" style="width:90%;background:#a3e635"></div></div><span class="stat-val" id="v-hygiene">90</span></div>
-    </div>
-  </div>
-</div>
+</div><!-- /stats-panel -->
 
 <!-- XP -->
 <div class="xp-row">
@@ -640,6 +663,9 @@ body::after{
   <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
   <span class="xp-val" id="xp-val">0/100</span>
 </div>
+
+</div><!-- /top-fixed -->
+<div class="bottom-scroll">
 
 <!-- Action Buttons -->
 <div class="sec-lbl">▶ PFLEGE</div>
@@ -697,6 +723,16 @@ body::after{
     <span class="good">+Energie</span><span class="risk">Schlaf gesperrt!</span>
     <div class="cd-overlay" id="cd-coffee"></div>
   </button>
+  <button class="btn btn-junk" id="btn-smoke" onclick="doSmoke()">
+    <span class="e">🚬</span><span class="lbl">RAUCHEN</span>
+    <span class="good">+Spaß</span><span class="risk">-Leben -Hygiene</span>
+    <div class="cd-overlay" id="cd-smoke"></div>
+  </button>
+  <button class="btn btn-coffee" id="btn-gamble" onclick="doGamble()">
+    <span class="e">🎰</span><span class="lbl">ZOCKEN</span>
+    <span class="good">Jackpot mögl.!</span><span class="risk">-Spaß bei Verlust</span>
+    <div class="cd-overlay" id="cd-gamble"></div>
+  </button>
 </div>
 
 <div class="sec-lbl" style="color:#ff4444;">▶ GEWALT</div>
@@ -710,6 +746,16 @@ body::after{
     <span class="e">🦵</span><span class="lbl">TRETEN</span>
     <span class="risk">-Leben -Energie</span>
     <div class="cd-overlay" id="cd-kick"></div>
+  </button>
+  <button class="btn btn-punch" id="btn-throw" onclick="doThrow()">
+    <span class="e">🧱</span><span class="lbl">BEWERFEN</span>
+    <span class="risk">-Leben stark</span><span class="risk">Noob flieht!</span>
+    <div class="cd-overlay" id="cd-throw"></div>
+  </button>
+  <button class="btn btn-punch" id="btn-yell" onclick="doYell()">
+    <span class="e">😤</span><span class="lbl">ANSCHREIEN</span>
+    <span class="risk">-Spaß -Energie</span><span class="risk">Noob weint!</span>
+    <div class="cd-overlay" id="cd-yell"></div>
   </button>
 </div>
 
@@ -729,6 +775,7 @@ body::after{
   </div>
 </div>
 
+</div><!-- /bottom-scroll -->
 </div><!-- /wrapper -->
 <div id="toast"></div>
 
@@ -1133,6 +1180,73 @@ function doJunk(){
 }
 function doCoffee(){if(isDead)return;sleepMode=false;caffeine+=3;energy=clamp(energy+30);fun=clamp(fun+5);health=clamp(health-5);gainXP(5);showBubble('AWAKE!!! ⚡⚡⚡');setExpr('excited');animNoob('dance 0.6s steps(6)');spawnParticles(7,['☕','⚡','💥','😤']);showToast('⚡ Caffeine +3 – Schlaf gesperrt!');updateBars();updateMood();startCD('btn-coffee','cd-coffee',7);setTimeout(()=>{caffeine=Math.max(0,caffeine-3);},15000);}
 function doMedic(){if(isDead)return;sleepMode=false;health=clamp(health+35);energy=clamp(energy-15);isSick=false;gainXP(10);showBubble('Der Arzt war ok...');setExpr('neutral');animNoob('shakeAnim 0.4s steps(4)');spawnParticles(5,['💊','❤️','✨']);updateBars();updateMood();startCD('btn-medic','cd-medic',12);}
+
+function doSmoke(){
+  if(isDead)return; sleepMode=false;
+  fun=clamp(fun+8); health=clamp(health-12); hygiene=clamp(hygiene-10);
+  const phrases=['Hmm... lecker... warte was?','Ich huste... aber cool 😎','Rauchen ist cool... oder?','*hust hust* ...oof','Noob raucht jetzt. Noob bereut.'];
+  gainXP(3); showBubble(pick(phrases)); setExpr('neutral');
+  animNoob('idle 2.4s steps(8) infinite');
+  spawnParticles(5,['🚬','💨','😵','💀']);
+  updateBars(); updateMood(); startCD('btn-smoke','cd-smoke',6);
+}
+
+function doGamble(){
+  if(isDead)return; sleepMode=false;
+  const roll=Math.random();
+  if(roll<0.1){
+    // JACKPOT
+    fun=clamp(fun+40); gainXP(30);
+    showBubble('JACKPOT!! 🎰🎰🎰'); setExpr('excited');
+    animNoob('dance 1s steps(8)');
+    spawnParticles(15,['🎰','💰','⭐','✨','🎉']);
+    showToast('🎰 JACKPOT! Noob ist reich! Spaß +40, XP +30');
+  } else if(roll<0.45){
+    // kleiner Gewinn
+    fun=clamp(fun+15); gainXP(8);
+    showBubble('Kleiner Gewinn! 🤑'); setExpr('happy');
+    animNoob('bounce 0.5s steps(4)');
+    spawnParticles(6,['💰','😊','⭐']);
+    showToast('🎲 Kleiner Gewinn! Spaß +15');
+  } else {
+    // Verlust
+    fun=clamp(fun-20); energy=clamp(energy-8);
+    showBubble('ICH HAB ALLES VERLOREN!! 😭'); setExpr('sad');
+    animNoob('shakeAnim 0.5s steps(4)');
+    spawnParticles(5,['💸','😢','❌']);
+    showToast('💸 Verloren! Spaß –20');
+  }
+  updateBars(); updateMood(); startCD('btn-gamble','cd-gamble',5);
+}
+
+function doThrow(){
+  if(isDead)return; sleepMode=false;
+  health=clamp(health-20); fun=clamp(fun-8);
+  triggerHitEffect(['AU!! EIN STEIN!!','WARUM EIN ZIEGEL?!','ICH FLIEG!!','Das war ILLEGAL!!','OW OW OW OW!!','Noob down!! 💥']);
+  // Noob fliegt weit weg
+  noobWrap.style.left = (Math.random()<0.5 ? 10 : 250) + 'px';
+  noobWrap.style.bottom = '65px';
+  setTimeout(repositionBubble, 1900);
+  setExpr('angry'); animNoob('hit 0.6s steps(6)');
+  spawnParticles(8,['🧱','💥','😵','⭐']);
+  updateBars(); updateMood(); startCD('btn-throw','cd-throw',4);
+}
+
+function doYell(){
+  if(isDead)return; sleepMode=false;
+  fun=clamp(fun-22); energy=clamp(energy-15); health=clamp(health-5);
+  const phrases=['ich... ich weine jetzt 😭','bitte nicht schreien...','das tut weh... im Herz','warum bist du so laut?!','*schluchz*','ich hab Angst 😢','ich will meine Mama!!'];
+  showBubble(pick(phrases)); setExpr('sad');
+  animNoob('shakeAnim 0.7s steps(6)');
+  spawnParticles(6,['😭','💧','😢','💔']);
+  // Shake the whole arena
+  arena.style.transform='translate(-4px,0)';
+  setTimeout(()=>{arena.style.transform='translate(4px,0)';},80);
+  setTimeout(()=>{arena.style.transform='translate(-2px,0)';},160);
+  setTimeout(()=>{arena.style.transform='';},240);
+  showToast('😤 Noob ist traumatisiert! Spaß –22');
+  updateBars(); updateMood(); startCD('btn-yell','cd-yell',3);
+}
 
 // ─── Arena click ──────────────────────────────────────────────────────────────
 // ─── PUNCH system ────────────────────────────────────────────────
